@@ -43,10 +43,16 @@
                             <el-input placeholder="未找到房型?自己输入房型"></el-input>
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="商品细节">
+                        <el-input v-model="product.productDetail" placeholder="请输入商品描述"></el-input>
+                    </el-form-item>
+                    <el-form-item label="商品规格">
+                        <el-input v-model="product.productDec" placeholder="请输入商品描述"></el-input>
+                    </el-form-item>
                     <el-form-item label="用户">
                         <el-select v-model="product.userId" placeholder="请选择用户" clearable>
-                            <el-option v-for="item in clientData" :key="item.value" :label="item.clientName"
-                                :value="item.clientId">
+                            <el-option v-for="item in userData" :key="item.value" :label="item.userName"
+                                :value="item.userId">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -58,7 +64,7 @@
                         </el-upload>
                     </el-form-item>
                     <el-form-item class="option">
-                        <el-button type="primary" @click="submitAdd">添加</el-button>
+                        <el-button type="primary" @click="addProduct">添加</el-button>
                         <el-button @click="resetForm">重置</el-button>
                     </el-form-item>
                 </el-form>
@@ -79,11 +85,11 @@ export default {
                 productName:"",
                 productPrice: "",
                 productDec:"",
+                productDetail:"",
                 productStatus: "在售",
                 imageId: 10001,
             },
-            clientData: [],
-            empData: [],
+            userData: [],
             fileList: [],
             img: {
                 img1:"",
@@ -95,38 +101,27 @@ export default {
         }
     },
     created() {
-        this.getClientData()
-        this.getEmpData()
+        this.getUserData()
     },
     methods: {
         //获取用户信息
-        getClientData() {
+        getUserData() {
             this.$axios({
-                url: "/client/getClient",//请求的后台接口
-                method: "get",//get请求方式
+                url: "/user/getUser",//请求的后台接口
+                method: "post",
+                data:{
+                    pageSize:30,
+                    currentPage:1
+                }
             }).then(response => {
-                this.clientData = response.data.data
-                console.log(this.clientData)
+                this.userData = response.data.data.data
+                console.log(response)
             }).catch(error => {
                 //请求失败
             });
         },
-
-        //获取员工信息
-        getEmpData() {
-            this.$axios({
-                url: "/emp/getEmp",//请求的后台接口
-                method: "get",//get请求方式
-            }).then(response => {
-                this.empData = response.data.data
-                console.log(this.empData)
-            }).catch(error => {
-                //请求失败
-            });
-        },
-
         //添加商品
-        addproduct() {
+        addProduct() {
             console.log(this.product);
             this.$axios.post('/product/add', this.product).then((request => {
                 console.log(request);
@@ -155,7 +150,7 @@ export default {
             this.product.cellName = ""
             this.product.productArea = ""
             this.product.productPrice = ""
-            this.product.clientId = ""
+            this.product.userId = ""
             this.product.empId = ""
             this.product.productType = ""
             this.product.productOrientation = ""
@@ -169,7 +164,7 @@ export default {
             this.product.cellName = ""
             this.product.productArea = ""
             this.product.productPrice = ""
-            this.product.clientId = ""
+            this.product.userId = ""
             this.product.empId = ""
             this.product.productType = ""
             this.product.productOrientation = ""
@@ -212,7 +207,7 @@ export default {
             this.$axios.post('/img/add', this.img).then(request => {
                 console.log(request);
                 this.product.imageId = request.data.data.imgId
-                this.addproduct()
+                this.addProduct()
             }).catch((error) => {
                 console.log(error)
             })

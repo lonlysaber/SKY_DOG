@@ -75,28 +75,32 @@
                 </el-table-column>
                 <el-table-column fixed="right" label="查询" width="160">
                     <template slot-scope="scope">
-                        <!-- 查询用户房源 -->
+                        <!-- 查询用户商品 -->
                         <el-button @click="queryMyProduct(scope.row)" type="text" size="small">售卖商品</el-button>
-                        <el-dialog title="用户房源" :visible.sync="dialogTableVisible" :modal-append-to-body='false'>
+                        <el-dialog title="用户商品" :visible.sync="dialogTableVisible" 
+                        :modal-append-to-body='false' >
                             <el-table :data="myProductData">
-                                <el-table-column property="productId" label="房屋编号"></el-table-column>
-                                <el-table-column property="categoryName" label="商品种类"></el-table-column>
-                                <el-table-column property="productName" label="商品名称"></el-table-column>
-                                <el-table-column property="productDec" label="商品描述"></el-table-column>
-                                <el-table-column property="productPrice" label="价格" width="40"></el-table-column>
-                                <el-table-column property="productStatus" label="状态" width="40"></el-table-column>
+                                <el-table-column property="productId" label="商品编号" width="80"></el-table-column>
+                                <el-table-column property="categoryName" label="商品种类" width="80"></el-table-column>
+                                <el-table-column property="productName" label="商品名称" width="160"></el-table-column>
+                                <el-table-column property="productPrice" label="价格" width="80"></el-table-column>
+                                <el-table-column property="productStatus" label="状态" width="80"></el-table-column>
+                                <el-table-column property="productDec" label="商品描述" width="160"></el-table-column>
+                                <el-table-column property="productDetail" label="商品细节" width="360"></el-table-column>
+                            </el-table>
+                            <el-table :data="myProductData">
 
                             </el-table>
                         </el-dialog>
                         <!-- 查询用户订单 -->
-                        <el-button @click="queryPurchase(scope.row)" type="text" size="small">订单</el-button>
+                        <el-button @click="queryMyOreder(scope.row)" type="text" size="small">订单</el-button>
                         <el-dialog title="用户订单" :visible.sync="dialogTableVisible1" :modal-append-to-body='false'>
-                            <el-table :data="purchaseData">
+                            <el-table :data="orderData">
                                 <el-table-column property="orderId" label="订单编号"></el-table-column>
-                                <el-table-column property="productId" label="房源编号"></el-table-column>
+                                <el-table-column property="productId" label="商品编号"></el-table-column>
                                 <el-table-column property="userId" label="用户编号"></el-table-column>
                                 <el-table-column property="productCount" label="商品数量"></el-table-column>
-                                <el-table-column property="productPrice" label="单价"></el-table-column>
+                                <el-table-column property="productDto.productPrice" label="单价"></el-table-column>
                                 <el-table-column property="createTime" label="订单时间"></el-table-column>
                                 <el-table-column property="orderStatus" label="订单状态"></el-table-column>
                             </el-table>
@@ -122,7 +126,7 @@
                                     <el-input v-model="update_user.password" show-password></el-input>
                                 </el-form-item>
                                 <el-form-item label="性别">
-                                    <el-input v-model="update_user.gender" show-password></el-input>
+                                    <el-input v-model="update_user.gender"></el-input>
                                 </el-form-item>
                             </el-form>
                             <div slot="footer" class="dialog-footer">
@@ -155,7 +159,7 @@ export default {
             searchuser: [],
             userData: [],
             myProductData: [],
-            purchaseData: [],
+            orderData: [],
             userId: "",
             total: 0,//总条目数
             pageSize: 10,//每页显示条目个数
@@ -167,7 +171,7 @@ export default {
                 phone: ""
             },
             dialogSearchVisible: false,  //客户查询结果弹出框
-            dialogTableVisible: false,  //房源查询弹出框
+            dialogTableVisible: false,  //商品查询弹出框
             dialogTableVisible1: false, //订单查询弹出框
             dialogVisible: false,       //修改表单弹出框
         }
@@ -288,16 +292,19 @@ export default {
             this.searchPhone = ""
         },
 
-        //查询用户房源
+        //查询用户商品
         queryMyProduct(user) {
+            console.log(user);
             this.userId = user.userId
+            console.log();
             this.$axios({
                 url: "/product/getMyProduct",//请求的后台接口
                 method: "post",
-                data:{
+                params:{
                     userId: this.userId
                 },
             }).then(response => {
+                console.log(response);
                 this.myProductData = response.data.data
                 this.dialogTableVisible = true
             }).catch(error => {
@@ -306,16 +313,17 @@ export default {
         },
 
         //查询用户订单
-        queryPurchase(user) {
+        queryMyOreder(user) {
             this.userId = user.userId
             this.$axios({
-                url: "/user/queryPurchase",//请求的后台接口
-                method: "get",//get请求方式
-                params: {
+                url: "/order/getMyOrder",//请求的后台接口
+                method: "post",
+                data: {
                     userId: this.userId
                 }
             }).then(response => {
-                this.purchaseData = response.data.data
+                console.log(response);
+                this.orderData = response.data.data
                 this.dialogTableVisible1 = true
             }).catch(error => {
                 console.log(error)
@@ -331,22 +339,30 @@ export default {
         //修改提交
         updateConfirm() {
             this.$axios({
-                url: "/user/updateuser",
+                url: "/user/updateClient",
                 method: "post",
-                data:
-                    this.update_user,
+                data:this.update_user,
                 header: {
                     'Content-Type': 'application/json;charset=UTF-8'
                 }
             }).then(res => {
-                if (res.data != null) {
+                console.log(res);
+                if (res.data.code == 204) {
                     this.dialogVisible = false;
-                };
-                this.$message({
-                    showClose: true,
-                    message: '修改成功！',
-                    type: 'success'
-                });
+                    this.$message({
+                        showClose: true,
+                        message: '修改成功！',
+                        type: 'success'
+                    });
+                    this.getUserData()
+                }else{
+                    this.$message({
+                        showClose: true,
+                        message: '修改失败！',
+                        type: 'success'
+                    });
+                }
+                
             })
         },
 
@@ -369,7 +385,7 @@ export default {
                 })).catch((error) => {
                     this.$message({
                         showClose: true,
-                        message: '删除失败，该用户存在订单或者房源！',
+                        message: '删除失败，该用户存在订单或者商品！',
                         type: 'warning'
                     });
                 })

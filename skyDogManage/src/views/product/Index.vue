@@ -23,7 +23,7 @@ export default {
         return {
             itemList: [
                 { path: 'manage', title: '商品管理', icon: "el-icon-setting" },
-                { path: 'search', title: '商品索引', icon: "el-icon-search" },
+                // { path: 'search', title: '商品索引', icon: "el-icon-search" },
                 { path: 'release', title: '商品发布', icon: "el-icon-s-promotion" }
             ]
         }

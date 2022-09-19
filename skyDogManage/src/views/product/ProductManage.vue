@@ -3,22 +3,9 @@
         <div class="container">
             <!-- 根据ID搜索商品 -->
             <el-row>
-                <el-input class="input" placeholder="请输入编号" v-model="searchID" clearable>
+                <el-input class="input" placeholder="请输入关键词" v-model="keyword" clearable>
                 </el-input>
-                <el-button @click="queryProductById(searchID)">搜索</el-button>
-                <el-dialog :visible.sync="dialogSearchVisible" :modal-append-to-body='false'>
-                    <el-descriptions title="查询结果" direction="vertical" :column="12" border >
-                        <el-descriptions-item label="商品编号" :span="4" >{{ searchProduct.productId }}</el-descriptions-item>
-                        <el-descriptions-item label="商品名" :span="6">{{ searchProduct.productName }}</el-descriptions-item>
-                        <el-descriptions-item label="评分" :span="2">{{ searchProduct.productGrade }}</el-descriptions-item>
-                        <el-descriptions-item label="用户编号" :span="4">{{ searchProduct.userId }}</el-descriptions-item>
-                        <el-descriptions-item label="商品描述" :span="6">{{ searchProduct.productDec }}</el-descriptions-item>
-                        <el-descriptions-item label="商品种类" :span="2">{{ searchProduct.categoryName }}</el-descriptions-item>
-                        <el-descriptions-item label="价格" :span="2">{{ searchProduct.productPrice }}</el-descriptions-item>
-                        <el-descriptions-item label="状态" :span="2">{{ searchProduct.productStatus }}</el-descriptions-item>
-                        <el-descriptions-item label="销量" :span="2">{{ searchProduct.productSale }}</el-descriptions-item>
-                    </el-descriptions>
-                </el-dialog>
+                <el-button @click="search(keyword)">搜索</el-button>
             </el-row>
             <!-- 商品信息 -->
             <el-table :data="productData"  border
@@ -37,12 +24,14 @@
                 <el-table-column prop="productPrice" label="价格" width="90" sortable>
                 </el-table-column>
                 <el-table-column prop="productStatus" label="状态" width="80"
-                    :filters="[{ text: '下架', value: '下架' }, { text: '在售', value: '在售' }]" :filter-method="filterTag"
+                    :filters="[{ text: '下架', value: '下架' }, { text: '在售', value: '在售' }]"
                     filter-placement="bottom-end">
                     <template slot-scope="scope">
                         <el-tag :type="scope.row.productStatus === '下架' ? 'primary' : 'success'" disable-transitions>
                             {{ scope.row.productStatus }}</el-tag>
                     </template>
+                </el-table-column>
+                <el-table-column prop="productDetail" label="商品细节" width="200">
                 </el-table-column>
                 <el-table-column prop="productSale" label="销量" width="90">
                 </el-table-column>
@@ -68,29 +57,48 @@
                         <el-button @click="updataProduct(scope.row)" size="small">修改</el-button>&nbsp;
                         <el-dialog title="修改信息" :visible.sync="dialogVisible" width="30%" :modal-append-to-body='false'>
                             <el-form ref="updateform" :model="update_Product" label-width="80px">
-                                <el-form-item label="商品种类">
-                                    <el-input v-model="update_Product.city"></el-input>
-                                </el-form-item>
                                 <el-form-item label="商品名">
-                                    <el-input v-model="update_Product.address"></el-input>
-                                </el-form-item>
-                                <el-form-item label="评分">
-                                    <el-input v-model="update_Product.cellName"></el-input>
+                                    <el-input type="textarea" v-model="update_Product.productName"></el-input>
                                 </el-form-item>
                                 <el-form-item label="商品描述">
-                                    <el-input v-model="update_Product.ProductArea"></el-input>
+                                    <el-input type="textarea" v-model="update_Product.productDec"></el-input>
                                 </el-form-item>
                                 <el-form-item label="价格">
-                                    <el-input v-model="update_Product.ProductPrice"></el-input>
+                                    <el-input v-model="update_Product.productPrice"></el-input>
                                 </el-form-item>
-                                <el-form-item label="销量">
-                                    <el-input v-model="update_Product.layoutType"></el-input>
+                                <el-form-item label="商品细节">
+                                    <el-input v-model="update_Product.productDetail" type="textarea"></el-input>
                                 </el-form-item>
-                                <el-form-item label="类型">
-                                    <el-radio-group v-model="update_Product.ProductType">
-                                        <el-radio label="新房"></el-radio>
-                                        <el-radio label="二手房"></el-radio>
-                                    </el-radio-group>
+                                <el-form-item label="商品种类">
+                                    <el-select v-model="update_Product.categoryId" placeholder="请选择商品种类">
+                                        <el-option label="手机" value="10001"></el-option>
+                                        <el-option label="电脑" value="10002"></el-option>
+                                        <el-option label="数码" value="10003"></el-option>
+                                        <el-option label="女装" value="10004"></el-option>
+                                        <el-option label="女鞋" value="10005"></el-option>
+                                        <el-option label="男装" value="10006"></el-option>
+                                        <el-option label="男鞋" value="10007"></el-option>
+                                        <el-option label="内衣" value="10008"></el-option>
+                                        <el-option label="奢品" value="10009"></el-option>
+                                        <el-option label="箱包" value="10010"></el-option>
+                                        <el-option label="美妆" value="10011"></el-option>
+                                        <el-option label="饰品" value="10012"></el-option>
+                                        <el-option label="洗护" value="10013"></el-option>
+                                        <el-option label="运动" value="10014"></el-option>
+                                        <el-option label="家装" value="10015"></el-option>
+                                        <el-option label="电器" value="10016"></el-option>
+                                        <el-option label="车品" value="10017"></el-option>
+                                        <el-option label="医药" value="10018"></el-option>
+                                        <el-option label="保健" value="10019"></el-option>
+                                        <el-option label="食品" value="10020"></el-option>
+                                        <el-option label="生鲜" value="10021"></el-option>
+                                        <el-option label="母婴" value="10022"></el-option>
+                                        <el-option label="企业礼品" value="10023"></el-option>
+                                        <el-option label="进口" value="10024"></el-option>
+                                        <el-option label="百货" value="10025"></el-option>
+                                        <el-option label="其他" value="10026"></el-option>
+                                        <el-input placeholder="未找到房型?自己输入房型"></el-input>
+                                    </el-select>
                                 </el-form-item>
                             </el-form>
                             <div slot="footer" class="dialog-footer">
@@ -116,7 +124,7 @@
 export default {
     data() {
         return {
-            searchID: "",
+            keyword: "",
             searchProduct: {
                 address: "",
                 adminId: "",
@@ -168,17 +176,26 @@ export default {
         handleCurrentChange(val){
             console.log(val);
             this.currentPage = val
-            this.getProductData()
+            if(this.keyword == ""){
+                this.getProductData()
+            }else{
+                this.search()
+            }
+            
         },
         handlesizeChange(val){
             console.log(val);
             this.pageSize = val
-            this.getProductData()
+            if(this.keyword == ""){
+                this.getProductData()
+            }else{
+                this.search()
+            }
         },
         //获取商品信息
         getProductData() {
             this.$axios({
-                url: "/product/getMyProduct",//请求的后台接口
+                url: "/product/getProduct",//请求的后台接口
                 method: "post",//get请求方式
                 data:{
                     currentPage:this.currentPage,
@@ -194,24 +211,24 @@ export default {
         },
 
         //根据ID搜索商品
-        queryProductById() {
+        search() {
             this.dialogSearchVisible = true
-            console.log(this.searchID)
-            this.$axios.get(`/product/queryById/${this.searchID}`)
-            .then((request => {
-                console.log(request.data.data);
-                this.searchProduct = request.data.data
-                console.log(this.searchProduct);
-                this.dialogSearchVisible = true
-                this.$message({
-                    showClose: true,
-                    message: '查询成功',
-                    type: 'success'
-                });
-            })).catch((error) => {
-                console.log(error);
-            })
-            this.searchID = ""
+            console.log(this.keyword)
+            this.$axios({
+                url: "/product/search",//请求的后台接口
+                method: "post",//get请求方式
+                data:{
+                    keyword:this.keyword,
+                    currentPage:this.currentPage,
+                    pageSize:this.pageSize
+                }
+            }).then(response => {
+                console.log(response)
+                this.productData = response.data.data.data
+                this.total = response.data.data.count
+            }).catch(error => {
+                //请求失败
+            });
         },
 
         //查看商品图片
@@ -237,8 +254,7 @@ export default {
             this.$axios({
                 url: "/product/update",
                 method: "post",
-                data:
-                    this.update_Product,
+                data:this.update_Product,
                 header: {
                     'Content-Type': 'application/json;charset=UTF-8'
                 }
