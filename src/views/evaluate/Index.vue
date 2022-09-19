@@ -21,9 +21,8 @@ export default {
     data() {
         return {
             itemList: [
-                { path: 'empManage', title: '员工管理', icon: "el-icon-setting" },
-                { path: 'empAdd', title: '员工添加', icon: "el-icon-s-promotion" },
-                { path: 'rankList', title: '员工排行', icon: "el-icon-s-data" }
+                { path: 'evaluateManage', title: '评价管理', icon: "el-icon-setting" },
+                { path: 'rankList', title: '好评排行', icon: "el-icon-s-promotion" },
             ]
         }
     }

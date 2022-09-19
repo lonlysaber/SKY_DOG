@@ -3,13 +3,10 @@
     <el-card>
       <el-row :gutter="35" style="margin: 0 auto; margin-bottom: 20px">
         <el-col :span="6">
-          <el-card
-            shadow="never"
-            style="border-top: 4px solid rgb(58, 160, 255)"
-          >
+          <el-card shadow="never" style="border-top: 4px solid rgb(58, 160, 255)">
             <div class="colorCardsBody">
-              <span>房源发布量<i class="el-icon-d-arrow-right"></i></span>
-              <p>{{ houseCount }}</p>
+              <span>商品发布量<i class="el-icon-d-arrow-right"></i></span>
+              <p>{{ houseCount }}9999+</p>
             </div>
           </el-card>
         </el-col>
@@ -17,29 +14,25 @@
           <el-card shadow="never" style="border-top: 4px solid red">
             <div class="colorCardsBody">
               <span>系统用户量<i class="el-icon-d-arrow-right"></i></span>
-              <p>{{ clientCount }}</p>
+              <p>{{ clientCount }}504</p>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card
-            shadow="never"
-            style="border-top: 4px solid rgb(250, 211, 55)"
-          >
+          <el-card shadow="never" style="border-top: 4px solid rgb(250, 211, 55)">
             <div class="colorCardsBody">
               <span>达成订单数<i class="el-icon-d-arrow-right"></i></span>
-              <p>{{ turnoverCount[0] }}</p>
+              <p>{{ turnoverCount[0] }}50</p>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card
-            shadow="never"
-            style="border-top: 4px solid rgb(78, 203, 115)"
-          >
+          <el-card shadow="never" style="border-top: 4px solid rgb(78, 203, 115)">
             <div class="colorCardsBody">
-              <span>季度营业额<i class="el-icon-d-arrow-right"></i></span>
-              <p>{{ turnoverCount[1] }}万</p>
+              <span>季度成交额<i class="el-icon-d-arrow-right"></i>
+                <p>{{ turnoverCount[1] }}15万</p>
+              </span>
+
             </div>
           </el-card>
         </el-col>
@@ -48,7 +41,7 @@
         <el-col :span="24">
           <div style="padding: 28px 40px 0 40px" class="dataOverview">
             <div class="overview-list-item">
-              <p class="overview-list-text">房源新增</p>
+              <p class="overview-list-text">商品新增</p>
               <p class="overview-list-count">7</p>
               <!-- <p :class="setColor(-10.52)">-10.52%</p> -->
             </div>
@@ -97,24 +90,15 @@
           <div id="LineECharts" style="width: 600px; height: 600px"></div>
         </el-row>
         <el-row :gutter="35" style="margin: 0 auto; margin-bottom: 20px">
-          <div
-            id="SectorECharts"
-            style="width: 600px; height: 600px; margin-top: 50px"
-          ></div>
+          <div id="SectorECharts" style="width: 600px; height: 600px; margin-top: 50px"></div>
         </el-row>
       </div>
       <div style="display: flex">
         <el-row :gutter="35" style="margin: 0 auto; margin-bottom: 20px">
-          <div
-            id="RoundECharts"
-            style="width: 600px; height: 600px; margin-top: 50px"
-          ></div>
+          <div id="RoundECharts" style="width: 600px; height: 600px; margin-top: 50px"></div>
         </el-row>
         <el-row :gutter="35" style="margin: 0 auto; margin-bottom: 20px">
-          <div
-            id="BarECharts"
-            style="width: 600px; height: 600px; margin-top: 25px"
-          ></div>
+          <div id="BarECharts" style="width: 600px; height: 600px; margin-top: 25px"></div>
         </el-row>
       </div>
     </el-card>
@@ -132,6 +116,49 @@ export default {
       orderCount: "",
       turnoverCount: [],
       quarter: "",
+
+      // 模拟数据
+      order: [10, 50, 50, 90],
+      turnover: [200, 150.5, 300.9, 100],
+      data: [
+        {
+          "value": 30,
+          "name": "0.0-50.0"
+        },
+        {
+          "value": 22,
+          "name": "50.0-100.0"
+        },
+        {
+          "value": 40,
+          "name": "100.0-200.0"
+        },
+        {
+          "value": 11,
+          "name": "200.0-500.0"
+        },
+        {
+          "value": 4,
+          "name": "500.0-1000.0"
+        },
+        {
+          "value": 2,
+          "name": "1000.0+"
+        }
+      ],
+      data2: [{
+        "value": 340,
+        "name": "注册用户"
+      },
+      {
+        "value": 170,
+        "name": "商家入驻"
+      },
+      {
+        "value": 1000,
+        "name": "游客数量"
+      }],
+      data3:[50,20,2]
     };
   },
 
@@ -221,10 +248,11 @@ export default {
           var data = res.data.data;
           //   console.log(data);
           // console.log(data.order);
+
           var order = data.order;
           var turnover = data.turnover;
           this.drawLine(order, turnover);
-          // console.log(data);
+          // console.log(data);         
         })
         .catch((error) => {
           //请求失败
@@ -279,8 +307,8 @@ export default {
             type: "value",
             name: "订单达成数",
             min: 0,
-            max: 25,
-            interval: 5,
+            max: 100,
+            interval: 10,
             axisLabel: {
               formatter: "{value} 笔",
             },
@@ -296,7 +324,7 @@ export default {
               },
             },
             //接收营业额数据
-            data: turnover,
+            data: this.turnover,
             //柱状图颜色变化
             itemStyle: {
               normal: {
@@ -323,7 +351,7 @@ export default {
               },
             },
             //接收已完成订单数据
-            data: order,
+            data: this.order,
           },
         ],
       });
@@ -358,7 +386,7 @@ export default {
       // 绘制图表
       myChart.setOption({
         title: {
-          text: "房源比例",
+          text: "商品比例",
           subtext: "价格占比",
           left: "center",
         },
@@ -374,7 +402,7 @@ export default {
             name: "价格区间",
             type: "pie",
             radius: "55%",
-            data: data,
+            data: this.data,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -412,7 +440,7 @@ export default {
       // 绘制图表
       myChart.setOption({
         title: {
-          text: "系统用户统计",
+          text: "系统角色统计",
           subtext: "人员比例",
           left: "center",
         },
@@ -448,7 +476,7 @@ export default {
             labelLine: {
               show: false,
             },
-            data: data,
+            data: this.data2,
           },
         ],
       });
@@ -491,8 +519,8 @@ export default {
           type: "value",
           name: "订单达成数",
           min: 0,
-          max: 25,
-          interval: 5,
+          max: 100,
+          interval: 10,
           axisLabel: {
             formatter: "{value} 笔",
           },
@@ -514,7 +542,7 @@ export default {
               },
             },
             barWidth: 70, //柱子宽度
-            data: data,
+            data: this.data3,
           },
         ],
       });
@@ -555,6 +583,7 @@ export default {
 
 .colorCardsBody span {
   font-size: 16px;
+  width: 50px;
   color: #515a6e;
 }
 
