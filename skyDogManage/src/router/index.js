@@ -42,19 +42,19 @@ const routes = [
 
       //用户管理
       {
-        path: 'client',
-        component: () => import('@/views/Client/index.vue'),
+        path: 'user',
+        component: () => import('@/views/user/index.vue'),
         meta: { title: '用户' },
-        redirect: '/client/clientManage',
+        redirect: '/user/userManage',
         children: [
           {
-            path: 'clientManage',
-            component: () => import('@/views/Client/clientManage.vue'),
+            path: 'userManage',
+            component: () => import('@/views/user/UserManage.vue'),
             meta: { title: '用户管理' },
           },
           {
-            path: 'clientAdd',
-            component: () => import('@/views/Client/clientAdd.vue'),
+            path: 'userAdd',
+            component: () => import('@/views/user/UserAdd.vue'),
             meta: { title: '用户添加' },
           }
         ]
@@ -107,26 +107,21 @@ const routes = [
 
       //员工管理
       {
-        path: 'Emp',
-        component: () => import('@/views/Emp/index.vue'),
+        path: 'address',
+        component: () => import('@/views/address/index.vue'),
         meta: { title: '员工' },
-        redirect: '/Emp/empManage',  // 该配置是若点击选择一级菜单时，默认选中并跳转到该一级菜单下的第一个二级菜单
+        redirect: '/address/addressManage',  // 该配置是若点击选择一级菜单时，默认选中并跳转到该一级菜单下的第一个二级菜单
         children: [
           {
-            path: 'empManage',
-            component: () => import('@/views/Emp/empManage.vue'),
+            path: 'addressManage',
+            component: () => import('@/views/address/AddressManage.vue'),
             meta: { title: '员工管理' },
           },
           {
-            path: 'empAdd',
-            component: () => import('@/views/Emp/empAdd.vue'),
+            path: 'addressAdd',
+            component: () => import('@/views/address/AddressAdd.vue'),
             meta: { title: '员工添加' },
           },
-          {
-            path: 'rankList',
-            component: () => import('@/views/Emp/rankList.vue'),
-            meta: { title: '员工排行' },
-          }
         ]
       },
 

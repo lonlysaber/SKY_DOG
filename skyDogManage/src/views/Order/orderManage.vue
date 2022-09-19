@@ -21,7 +21,7 @@
         </el-dialog>
       </el-row>
       <!-- 订单信息 -->
-      <el-table :data="orderData.slice((currentPage - 1) * pagesize, currentPage * pagesize)" border
+      <el-table :data="orderData" border
         highlight-current-row :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }"
         style="width: 100%; margin-top: 8px; text-align: center" :default-sort="{ prop: 'date', order: 'descending' }">
         <el-table-column prop="createTime" label="创建时间" sortable width="160">
@@ -34,15 +34,16 @@
         </el-table-column>
         <el-table-column prop="productId" label="商品编号">
         </el-table-column>
-        <el-table-column prop="productPrice" label="价格" sortable>
+        <el-table-column prop="productDto.productPrice" label="价格" sortable>
         </el-table-column>
         <el-table-column prop="productCount" label="数量">
         </el-table-column>
         <el-table-column prop="payTime" label="支付时间" sortable width="160">
         </el-table-column>
         <el-table-column prop="orderStatus" label="订单状态"
-          :filters="[{ text: '已完成', value: '已完成' }, { text: '待支付', value: '待支付' }, { text: '取消', value: '取消' }]"
-          :filter-method="filterTag" filter-placement="bottom-end">
+          :filters="[{ text: '待收货', value: '待收货' }, { text: '待发货', value: '待发货' }, 
+          { text: '待支付', value: '待支付' },{ text: '已收货', value: '已收货' },{ text: '取消', value: '取消' }]"
+         filter-placement="bottom-end">
           <template slot-scope="scope">
             <el-tag
               :type="scope.row.orderStatus === '已完成' ? 'success' : (scope.row.orderStatus === '待支付' ? 'warning' : 'danger')"
@@ -60,12 +61,6 @@
                 <el-form-item label="创建时间">
                   <el-input v-model="update_Order.createTime"></el-input>
                 </el-form-item>
-                <el-form-item label="负责员工">
-                  <el-select v-model="update_Order.userId" placeholder="请选择员工" clearable>
-                    <el-option v-for="item in empData" :key="item.value" :label="item.empName" :value="item.userId">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
                 <el-form-item label="客户编号">
                   <el-input v-model="update_Order.addressId" disabled></el-input>
                 </el-form-item>
@@ -73,12 +68,17 @@
                   <el-input v-model="update_Order.productId" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="销售价格">
-                  <el-input v-model="update_Order.productPrice"></el-input>
+                  <el-input v-model="update_Order.productDto.productPrice"></el-input>
+                </el-form-item>
+                <el-form-item label="销售数量">
+                  <el-input v-model="update_Order.productCount"></el-input>
                 </el-form-item>
                 <el-form-item label="订单状态">
                   <el-select v-model="update_Order.orderStatus">
-                    <el-option label="已完成" value="已完成"></el-option>
+                    <el-option label="待收货" value="待收货"></el-option>
+                    <el-option label="待发货" value="待发货"></el-option>
                     <el-option label="待支付" value="待支付"></el-option>
+                    <el-option label="已收货" value="已收货"></el-option>
                     <el-option label="取消" value="取消"></el-option>
                   </el-select>
                 </el-form-item>
@@ -124,15 +124,12 @@ export default {
         orderId: "",
       },
       update_Order: {
-        createTime: "",
-        orderId: "",
-        userId: "",
-        addressId: "",
-        productPrice: "",
-        orderStatus: "",
+        productDto:{
+          productPrice:""
+        }
       },
       total: 0,//总条目数
-      pagesize: 9,//每页显示条目个数
+      pageSize: 10,//每页显示条目个数
       currentPage: 1,//当前页数
 
       dialogSearchVisible: false,  //房源查询结果弹出框
@@ -140,33 +137,35 @@ export default {
     };
   },
   created() {
-    this.getorderData();   //获取订单数据
+    this.getOrder();   //获取订单数据
     this.getEmpData()     //获取员工数据
   },
   methods: {
-    //订单状态筛选
-    filterTag(value, row) {
-      return row.orderStatus === value;
+    handleCurrentChange(val){
+        console.log(val);
+        this.currentPage = val
+        this.getOrder()
     },
-
-    //监听 pagesize 改变的事件
-    size_change(newSize) {
-      this.pagesize = newSize
-    },
-    //监听 页码值 改变的事件
-    current_change(newPage) {
-      this.currentPage = newPage
+    handlesizeChange(val){
+        console.log(val);
+        this.pageSize = val
+        this.getOrder()
     },
 
     //查询所有订单并且把数据渲染到表格
-    getorderData() {
+    getOrder() {
       this.$axios({
-        url: "/order/getAllOrder", //请求订单查询的接口
-        method: "get", //通过get方法
+        url: "/order/getOrder", //请求订单查询的接口
+        method: "post",
+        data:{
+          currentPage:this.currentPage,
+          pageSize:this.pageSize
+        }
       })
         .then((res) => {
           console.log(res)
-          this.orderData = res.data.data;
+          this.orderData = res.data.data.data;
+          this.total = res.data.data.count
         })
         .catch((err) => {
           //请求失败

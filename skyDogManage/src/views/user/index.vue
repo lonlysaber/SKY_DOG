@@ -21,8 +21,8 @@ export default {
     data() {
         return {
             itemList: [
-                { path: 'clientManage', title: '用户管理' , icon: "el-icon-setting"},
-                { path: 'clientAdd', title: '用户添加' , icon: "el-icon-s-promotion" }
+                { path: 'userManage', title: '用户管理' , icon: "el-icon-setting"},
+                { path: 'userAdd', title: '用户添加' , icon: "el-icon-s-promotion" }
             ]
         }
     }

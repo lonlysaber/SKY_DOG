@@ -2,7 +2,7 @@
     <div class="wrapper">
         <!-- 页面头部部分 -->
         <div class="header">
-            <div class="logo">房产中介管理</div>
+            <div class="logo">天狗电商管理</div>
             <!-- 水平一级菜单 -->
             <div style="float:left;">
                 <el-menu mode="horizontal" text-color="#000000" active-text-color="#3989fa" :default-active="toIndex"
@@ -73,10 +73,10 @@ export default {
         return {
             itemList: [    // 水平一级菜单栏的菜单
                 { path: '/home', title: '首页' },
-                { path: '/client', title: '用户' },
+                { path: '/user', title: '用户' },
                 { path: '/product', title: '商品' },
                 { path: '/order', title: '订单' },
-                { path: '/emp', title: '地址' },
+                { path: '/address', title: '地址' },
             ],
             empID: "",            //员工编号
             accPassword: "",      //新密码
