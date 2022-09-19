@@ -2,66 +2,52 @@
     <div class="content-box">
         <div class="container">
             <div class="form">
-                <el-form ref="ruleForm" :model="house" label-width="100px">
-                    <el-form-item label="城市">
-                        <el-input v-model="house.city" placeholder="请输入城市"></el-input>
+                <el-form ref="ruleForm" :model="product" label-width="100px">
+                    <el-form-item label="商品名">
+                        <el-input v-model="product.productName" placeholder="请输入商品名"></el-input>
                     </el-form-item>
-                    <el-form-item label="地址">
-                        <el-input v-model="house.address" placeholder="请输入地址"></el-input>
+                    <el-form-item label="商品描述">
+                        <el-input v-model="product.productDec" placeholder="请输入商品描述"></el-input>
                     </el-form-item>
-                    <el-form-item label="小区">
-                        <el-input v-model="house.cellName" placeholder="请输入小区"></el-input>
+                    <el-form-item label="价格">
+                        <el-input v-model="product.productPrice" placeholder="请输入价格"></el-input>
                     </el-form-item>
-                    <el-form-item label="面积（㎡）">
-                        <el-input v-model="house.houseArea" placeholder="请输入面积"></el-input>
-                    </el-form-item>
-                    <el-form-item label="价格(万元)">
-                        <el-input v-model="house.housePrice" placeholder="请输入价格"></el-input>
-                    </el-form-item>
-                    <el-form-item label="户型">
-                        <el-select v-model="house.layoutType" placeholder="请选择户型">
-                            <el-option label="1室1厅1厨1卫" value="1室1厅1厨1卫"></el-option>
-                            <el-option label="2室1厅1厨1卫" value="2室1厅1厨1卫"></el-option>
-                            <el-option label="3室1厅1厨1卫" value="3室1厅1厨1卫"></el-option>
-                            <el-option label="3室1厅1厨2卫" value="3室1厅1厨2卫"></el-option>
-                            <el-option label="3室2厅1厨2卫" value="3室2厅1厨2卫"></el-option>
-                            <el-option label="4室1厅1厨1卫" value="4室1厅1厨1卫"></el-option>
-                            <el-option label="4室2厅1厨1卫" value="4室2厅1厨1卫"></el-option>
-                            <el-option label="4室2厅1厨2卫" value="4室2厅1厨2卫"></el-option>
-                            <el-option label="4室2厅1厨3卫" value="4室2厅1厨3卫"></el-option>
-                            <el-option label="5室1厅1厨1卫" value="5室1厅1厨1卫"></el-option>
-                            <el-option label="5室2厅1厨1卫" value="5室2厅1厨1卫"></el-option>
-                            <el-option label="5室2厅1厨2卫" value="5室2厅1厨2卫"></el-option>
-                            <el-option label="5室3厅1厨3卫" value="5室3厅1厨3卫"></el-option>
-                            <el-input v-model="house.layoutType" placeholder="未找到房型?自己输入房型"></el-input>
+                    <el-form-item label="商品种类">
+                        <el-select v-model="product.categoryId" placeholder="请选择商品种类">
+                            <el-option label="手机" value="10001"></el-option>
+                            <el-option label="电脑" value="10002"></el-option>
+                            <el-option label="数码" value="10003"></el-option>
+                            <el-option label="女装" value="10004"></el-option>
+                            <el-option label="女鞋" value="10005"></el-option>
+                            <el-option label="男装" value="10006"></el-option>
+                            <el-option label="男鞋" value="10007"></el-option>
+                            <el-option label="内衣" value="10008"></el-option>
+                            <el-option label="奢品" value="10009"></el-option>
+                            <el-option label="箱包" value="10010"></el-option>
+                            <el-option label="美妆" value="10011"></el-option>
+                            <el-option label="饰品" value="10012"></el-option>
+                            <el-option label="洗护" value="10013"></el-option>
+                            <el-option label="运动" value="10014"></el-option>
+                            <el-option label="家装" value="10015"></el-option>
+                            <el-option label="电器" value="10016"></el-option>
+                            <el-option label="车品" value="10017"></el-option>
+                            <el-option label="医药" value="10018"></el-option>
+                            <el-option label="保健" value="10019"></el-option>
+                            <el-option label="食品" value="10020"></el-option>
+                            <el-option label="生鲜" value="10021"></el-option>
+                            <el-option label="母婴" value="10022"></el-option>
+                            <el-option label="企业礼品" value="10023"></el-option>
+                            <el-option label="进口" value="10024"></el-option>
+                            <el-option label="百货" value="10025"></el-option>
+                            <el-option label="其他" value="10026"></el-option>
+                            <el-input placeholder="未找到房型?自己输入房型"></el-input>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="用户">
-                        <el-select v-model="house.clientId" placeholder="请选择用户" clearable>
+                        <el-select v-model="product.userId" placeholder="请选择用户" clearable>
                             <el-option v-for="item in clientData" :key="item.value" :label="item.clientName"
                                 :value="item.clientId">
                             </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="员工">
-                        <el-select v-model="house.empId" placeholder="请选择员工" clearable>
-                            <el-option v-for="item in empData" :key="item.value" :label="item.empName"
-                                :value="item.empId">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="类型">
-                        <el-radio-group v-model="house.houseType">
-                            <el-radio label="新房"></el-radio>
-                            <el-radio label="二手房"></el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="朝向">
-                        <el-select v-model="house.houseOrientation" placeholder="请选择房源朝向">
-                            <el-option label="南" value="南"></el-option>
-                            <el-option label="东" value="东"></el-option>
-                            <el-option label="北" value="北"></el-option>
-                            <el-option label="西" value="西"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item class="option" label="图片">
@@ -86,31 +72,25 @@
 export default {
     data() {
         return {
-            house: {
-                address: "",
+            product: {
+                userId:"",
                 adminId: "",
-                cellName: "",
-                city: "",
-                clientId: "",
-                empId: "",
-                houseArea: "",
-                houseId: "",
-                houseOrientation: "",
-                housePrice: "",
-                houseType: "",
-                houseStatus: "在售",
+                categoryId:"",
+                productName:"",
+                productPrice: "",
+                productDec:"",
+                productStatus: "在售",
                 imageId: 10001,
-                layoutType: "",
             },
             clientData: [],
             empData: [],
             fileList: [],
             img: {
-                img1: "",
-                img2: "",
-                img3: "",
-                img4: "",
-                img5: "",
+                img1:"",
+                img2:"",
+                img3:"",
+                img4:"",
+                img5:"",
             },
         }
     },
@@ -145,16 +125,16 @@ export default {
             });
         },
 
-        //添加房源
-        addHouse() {
-            console.log(this.house);
-            this.$axios.post('/house/add', this.house).then((request => {
+        //添加商品
+        addproduct() {
+            console.log(this.product);
+            this.$axios.post('/product/add', this.product).then((request => {
                 console.log(request);
                 if (request.data.message == "添加成功") {
                     console.log("添加成功！");
                     this.$message({
                         showClose: true,
-                        message: '添加房源成功！',
+                        message: '添加商品成功！',
                         type: 'success'
                     });
                 }
@@ -170,30 +150,30 @@ export default {
                 console.log(error);
             })
             //清空输入框
-            this.house.city = ""
-            this.house.address = ""
-            this.house.cellName = ""
-            this.house.houseArea = ""
-            this.house.housePrice = ""
-            this.house.clientId = ""
-            this.house.empId = ""
-            this.house.houseType = ""
-            this.house.houseOrientation = ""
-            this.house.layoutType = ""
+            this.product.city = ""
+            this.product.address = ""
+            this.product.cellName = ""
+            this.product.productArea = ""
+            this.product.productPrice = ""
+            this.product.clientId = ""
+            this.product.empId = ""
+            this.product.productType = ""
+            this.product.productOrientation = ""
+            this.product.layoutType = ""
         },
         //重制
         resetForm() {
             //清空输入框
-            this.house.city = ""
-            this.house.address = ""
-            this.house.cellName = ""
-            this.house.houseArea = ""
-            this.house.housePrice = ""
-            this.house.clientId = ""
-            this.house.empId = ""
-            this.house.houseType = ""
-            this.house.houseOrientation = ""
-            this.house.layoutType = ""
+            this.product.city = ""
+            this.product.address = ""
+            this.product.cellName = ""
+            this.product.productArea = ""
+            this.product.productPrice = ""
+            this.product.clientId = ""
+            this.product.empId = ""
+            this.product.productType = ""
+            this.product.productOrientation = ""
+            this.product.layoutType = ""
         },
         upload(event, file, fileList) {
             console.log('event');
@@ -231,8 +211,8 @@ export default {
 
             this.$axios.post('/img/add', this.img).then(request => {
                 console.log(request);
-                this.house.imageId = request.data.data.imgId
-                this.addHouse()
+                this.product.imageId = request.data.data.imgId
+                this.addproduct()
             }).catch((error) => {
                 console.log(error)
             })

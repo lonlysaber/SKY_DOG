@@ -9,14 +9,14 @@
         <el-dialog :visible.sync="dialogSearchVisible" :modal-append-to-body='false'>
           <el-descriptions title="查询结果" direction="vertical" :column="4" border>
             <el-descriptions-item label="订单编号">{{ searchOrder.orderId }}</el-descriptions-item>
-            <el-descriptions-item label="房源编号">{{ searchOrder.houseId }}</el-descriptions-item>
-            <el-descriptions-item label="客户编号" :span="2">{{ searchOrder.clientId }}</el-descriptions-item>
-            <el-descriptions-item label="员工编号">{{ searchOrder.empId }}</el-descriptions-item>
-            <el-descriptions-item label="价格（万元）">{{ searchOrder.salePrice }}</el-descriptions-item>
+            <el-descriptions-item label="商品编号">{{ searchOrder.productId }}</el-descriptions-item>
+            <el-descriptions-item label="客户编号" :span="2">{{ searchOrder.addressId }}</el-descriptions-item>
+            <el-descriptions-item label="员工编号">{{ searchOrder.userId }}</el-descriptions-item>
+            <el-descriptions-item label="价格（万元）">{{ searchOrder.productPrice }}</el-descriptions-item>
             <el-descriptions-item label="状态">
               <el-tag size="small">{{ searchOrder.orderStatus }}</el-tag>
             </el-descriptions-item>
-            <el-descriptions-item label="订单时间">{{ searchOrder.buildTime }}</el-descriptions-item>
+            <el-descriptions-item label="订单时间">{{ searchOrder.createTime }}</el-descriptions-item>
           </el-descriptions>
         </el-dialog>
       </el-row>
@@ -24,17 +24,21 @@
       <el-table :data="orderData.slice((currentPage - 1) * pagesize, currentPage * pagesize)" border
         highlight-current-row :header-cell-style="{ 'text-align': 'center' }" :cell-style="{ 'text-align': 'center' }"
         style="width: 100%; margin-top: 8px; text-align: center" :default-sort="{ prop: 'date', order: 'descending' }">
-        <el-table-column prop="buildTime" label="发布时间" sortable width="160">
+        <el-table-column prop="createTime" label="创建时间" sortable width="160">
         </el-table-column>
         <el-table-column prop="orderId" label="订单编号">
         </el-table-column>
-        <el-table-column prop="empId" label="负责员工">
+        <el-table-column prop="userId" label="买家编号">
         </el-table-column>
-        <el-table-column prop="clientId" label="客户编号">
+        <el-table-column prop="addressId" label="地址编号">
         </el-table-column>
-        <el-table-column prop="houseId" label="房源编号">
+        <el-table-column prop="productId" label="商品编号">
         </el-table-column>
-        <el-table-column prop="salePrice" label="房屋总价(万元)" sortable>
+        <el-table-column prop="productPrice" label="价格" sortable>
+        </el-table-column>
+        <el-table-column prop="productCount" label="数量">
+        </el-table-column>
+        <el-table-column prop="payTime" label="支付时间" sortable width="160">
         </el-table-column>
         <el-table-column prop="orderStatus" label="订单状态"
           :filters="[{ text: '已完成', value: '已完成' }, { text: '待支付', value: '待支付' }, { text: '取消', value: '取消' }]"
@@ -53,23 +57,23 @@
             <!-- 订单修改 -->
             <el-dialog title="修改信息" :visible.sync="dialogVisible" width="30%" :modal-append-to-body='false'>
               <el-form ref="updateform" :model="update_Order" label-width="80px">
-                <el-form-item label="发布时间">
-                  <el-input v-model="update_Order.buildTime"></el-input>
+                <el-form-item label="创建时间">
+                  <el-input v-model="update_Order.createTime"></el-input>
                 </el-form-item>
                 <el-form-item label="负责员工">
-                  <el-select v-model="update_Order.empId" placeholder="请选择员工" clearable>
-                    <el-option v-for="item in empData" :key="item.value" :label="item.empName" :value="item.empId">
+                  <el-select v-model="update_Order.userId" placeholder="请选择员工" clearable>
+                    <el-option v-for="item in empData" :key="item.value" :label="item.empName" :value="item.userId">
                     </el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="客户编号">
-                  <el-input v-model="update_Order.clientId" disabled></el-input>
+                  <el-input v-model="update_Order.addressId" disabled></el-input>
                 </el-form-item>
-                <el-form-item label="房源编号">
-                  <el-input v-model="update_Order.houseId" disabled></el-input>
+                <el-form-item label="商品编号">
+                  <el-input v-model="update_Order.productId" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="销售价格">
-                  <el-input v-model="update_Order.salePrice"></el-input>
+                  <el-input v-model="update_Order.productPrice"></el-input>
                 </el-form-item>
                 <el-form-item label="订单状态">
                   <el-select v-model="update_Order.orderStatus">
@@ -89,9 +93,11 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination @size-change="size_change" @current-change="current_change" :current-page="currentPage"
-        :page-sizes="[9, 20, 30]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="orderData.length
-        ">
+      <el-pagination 
+          @size-change="handlesizeChange"
+          @current-change="handleCurrentChange"
+          :page-size="pageSize" 
+          layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
   </div>
@@ -104,25 +110,25 @@ export default {
       empData: [],  //员工数据
       searchID: "",
       searchOrder: {
-        buildTime: "",
+        createTime: "",
         orderId: "",
-        empId: "",
-        clientId: "",
-        salePrice: "",
+        userId: "",
+        addressId: "",
+        productPrice: "",
         orderStatus: "",
       },
       orderData: [],
       orderID: "",
-      houseID: "",
+      productId: "",
       order: {
         orderId: "",
       },
       update_Order: {
-        buildTime: "",
+        createTime: "",
         orderId: "",
-        empId: "",
-        clientId: "",
-        salePrice: "",
+        userId: "",
+        addressId: "",
+        productPrice: "",
         orderStatus: "",
       },
       total: 0,//总条目数
@@ -237,15 +243,15 @@ export default {
         center: true
       }).then(() => {
         this.orderID = order.orderId + "";
-        this.houseID = order.houseId
+        this.productId = order.productId
         console.log(this.orderID);
-        console.log(this.houseID);
+        console.log(this.productId);
         this.$axios({
           url: "/order/delete/" + this.orderID,
           method: "get",
         })
           .then((res) => {
-            this.$axios.get(`/house/changeStatusById/${this.houseID}`).then((request => {
+            this.$axios.get(`/house/changeStatusById/${this.productId}`).then((request => {
             })).catch((error) => {
             })
             this.getorderData(); //重新刷新页面的数据
