@@ -76,7 +76,7 @@ export default {
                 { path: '/user', title: '用户' },
                 { path: '/product', title: '商品' },
                 { path: '/order', title: '订单' },
-                { path: '/address', title: '地址' },
+                { path: '/evaluate', title: '评价' },
             ],
             empID: "",            //员工编号
             accPassword: "",      //新密码

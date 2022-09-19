@@ -105,22 +105,22 @@ const routes = [
         ]
       },
 
-      //员工管理
+      //评价管理
       {
-        path: 'address',
-        component: () => import('@/views/address/index.vue'),
-        meta: { title: '员工' },
-        redirect: '/address/addressManage',  // 该配置是若点击选择一级菜单时，默认选中并跳转到该一级菜单下的第一个二级菜单
+        path: 'evaluate',
+        component: () => import('@/views/evaluate/Index.vue'),
+        meta: { title: '评价' },
+        redirect: '/evaluate/evaluateManage',  // 该配置是若点击选择一级菜单时，默认选中并跳转到该一级菜单下的第一个二级菜单
         children: [
           {
-            path: 'addressManage',
-            component: () => import('@/views/address/AddressManage.vue'),
-            meta: { title: '员工管理' },
+            path: 'evaluateManage',
+            component: () => import('@/views/evaluate/EvaluateManage.vue'),
+            meta: { title: '评价管理' },
           },
           {
-            path: 'addressAdd',
-            component: () => import('@/views/address/AddressAdd.vue'),
-            meta: { title: '员工添加' },
+            path: 'rankList',
+            component: () => import('@/views/evaluate/RankList.vue'),
+            meta: { title: '好评排行' },
           },
         ]
       },

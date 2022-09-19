@@ -2,12 +2,12 @@
     <div>
         <div class="content-box">
             <div class="container" style="height:900px">
-                <div class="titletop">连家公司内部员工榜单</div>
+                <div class="titletop">商品评价榜单</div>
                 <div class="rankLeft">
                     <div class=resultheader>
                         <div class=resulttitle>
                             
-                            <div class="titlebottom">销售个人提成榜<el-dropdown size="mini" @command="handleCommand">
+                            <div class="titlebottom">商品好评榜<el-dropdown size="mini" @command="handleCommand">
                                 <el-button type="el-dropdown-link">
                                     选择季度({{qua1}})<i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
@@ -42,7 +42,7 @@
                     <div class=resultheader>
                         <div class=resulttitle>
                             
-                            <div class="titlebottom">订单数量榜<el-dropdown size="mini" @command="handle">
+                            <div class="titlebottom">订单达成榜<el-dropdown size="mini" @command="handle">
                                 <el-button type="el-dropdown-link">
                                     选择季度({{qua2}})<i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
@@ -161,8 +161,8 @@ export default {
     /* 结果头部 */
     //  position: absolute;
     width: 100%;
-    border: 10px solid #9b7fff;
-    background-color: #9b7fff;
+    border: 10px solid #3989FA;
+    background-color: #3989FA;
     border-radius: 32px 32px 0px 0px;
 }
 

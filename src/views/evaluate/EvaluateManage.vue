@@ -1,34 +1,39 @@
 <template>
     <div class="content-box">
         <div class="container">
-            <!-- 根据条件搜索员工 -->
+            <!-- 根据条件搜索评价 -->
             <el-row>
-                <el-input class="input" placeholder="请输入编号" v-model="searchID" clearable>
+                <el-input class="input" placeholder="请输入商品编号" v-model="searchID" clearable>
                 </el-input>
-                <el-button @click="queryEmpById(searchID)">搜索编号</el-button>
+                <el-button @click="queryEvaluateById(searchID)">搜索编号</el-button>
                 &nbsp;&nbsp;
-                <el-input class="input" placeholder="请输入姓名" v-model="searchName" clearable>
+                <el-input class="input" placeholder="请输入商品名称" v-model="searchName" clearable>
                 </el-input>
-                <el-button @click="queryEmpByName(searchName)">搜索姓名</el-button>
+                <el-button @click="queryEvaluateByName(searchName)">搜索名称</el-button>
                 &nbsp;&nbsp;
-                <el-input class="input" placeholder="请输入手机号" v-model="searchPhone" clearable>
-                </el-input>
-                <el-button @click="queryEmpByPhone(searchPhone)">搜索手机号</el-button>
             </el-row>
+
             <!-- 搜索结果弹窗 -->
             <el-dialog title="搜索结果" :visible.sync="dialogSearchVisible" :modal-append-to-body='false'>
                 <el-table :data="searchEmp" border highlight-current-row :header-cell-style="{ 'text-align': 'center' }"
                     :cell-style="{ 'text-align': 'center' }" style="width: 100%; margin-top: 8px; text-align: center">
-                    <el-table-column prop="adminId" label="管理员ID">
+                    <el-table-column prop="adminId" label="商品ID">
                     </el-table-column>
-                    <el-table-column prop="empId" label="员工ID">
+
+                    <el-table-column prop="empId" label="评价ID">
                     </el-table-column>
-                    <el-table-column prop="empName" label="姓名">
+
+                    <el-table-column prop="empName" label="用户昵称">
                     </el-table-column>
-                    <el-table-column prop="empAccount" label="登录名">
+
+                    <el-table-column prop="empAccount" label="评价内容">
                     </el-table-column>
-                    <el-table-column prop="empPhone" label="电话">
+
+                    <el-table-column prop="empPhone" label="评价等级">
                     </el-table-column>
+                    <el-table-column prop="hireDate" label="评价时间" sortable>
+                    </el-table-column>
+                    
                     <el-table-column fixed="right" label="操作" width="150">
                         <template slot-scope="scope">
                             <!-- 修改信息弹窗 -->
@@ -67,48 +72,17 @@
                 highlight-current-row :header-cell-style="{ 'text-align': 'center' }"
                 :cell-style="{ 'text-align': 'center' }" style="width: 100%; margin-top: 8px; text-align: center"
                 :default-sort="{ prop: 'date', order: 'descending' }">
-                <el-table-column prop="adminId" label="管理员ID">
+                <el-table-column prop="adminId" label="商品ID" width="100">
                 </el-table-column>
-                <el-table-column prop="empId" label="员工ID">
+                <el-table-column prop="empId" label="评价ID"  width="100" >
                 </el-table-column>
-                <el-table-column prop="empName" label="姓名">
+                <el-table-column prop="empName" label="用户昵称"  width="110">
                 </el-table-column>
-                <el-table-column prop="empAccount" label="登录名">
+                <el-table-column prop="empAccount" label="评价内容" width="350">
                 </el-table-column>
-                <el-table-column prop="empPhone" label="电话">
+                <el-table-column prop="empPhone" label="评价等级"  width="120">
                 </el-table-column>
-                <el-table-column prop="hireDate" label="入职日期" sortable>
-                </el-table-column>
-                <el-table-column fixed="right" label="查询" width="110">
-                    <template slot-scope="scope">
-                        <!-- 查询员工负责房源 -->
-                        <el-button @click="queryMyManageHouse(scope.row)" type="text" size="small">房源</el-button>
-                        <el-dialog title="员工负责房源" :visible.sync="dialogTableVisible" :modal-append-to-body='false'>
-                            <el-table :data="houseData">
-                                <el-table-column property="houseId" label="房屋编号"></el-table-column>
-                                <el-table-column property="city" label="城市"></el-table-column>
-                                <el-table-column property="address" label="地址"></el-table-column>
-                                <el-table-column property="cellName" label="小区"></el-table-column>
-                                <el-table-column property="layoutType" label="户型"></el-table-column>
-                                <el-table-column property="houseArea" label="面积"></el-table-column>
-                                <el-table-column property="housePrice" label="价格"></el-table-column>
-                                <el-table-column property="houseOrientation" label="朝向"></el-table-column>
-                            </el-table>
-                        </el-dialog>
-                        <!-- 查询员工负责订单 -->
-                        <el-button @click="queryPurchase(scope.row)" type="text" size="small">订单</el-button>
-                        <el-dialog title="员工负责订单" :visible.sync="dialogTableVisible1" :modal-append-to-body='false'>
-                            <el-table :data="purchaseData">
-                                <el-table-column property="orderId" label="订单编号"></el-table-column>
-                                <el-table-column property="houseId" label="房源编号"></el-table-column>
-                                <el-table-column property="clientId" label="用户编号"></el-table-column>
-                                <el-table-column property="empId" label="员工编号"></el-table-column>
-                                <el-table-column property="salePrice" label="成交额"></el-table-column>
-                                <el-table-column property="buildTime" label="订单时间"></el-table-column>
-                                <el-table-column property="orderStatus" label="订单状态"></el-table-column>
-                            </el-table>
-                        </el-dialog>
-                    </template>
+                <el-table-column prop="hireDate" label="评价时间" sortable>
                 </el-table-column>
                 <el-table-column fixed="right" label="操作" width="150">
                     <template slot-scope="scope">
@@ -191,18 +165,18 @@ export default {
         current_change(newPage) {
             this.currentPage = newPage
         },
-        
+
         // 日期转换
-		  formateDate(emp) {
-			  for (var data in emp){
-				  // 数据拆分
-				   let arr = emp[data].hireDate.split('T');
-				   let d = arr[0];
-				   emp[data].hireDate=d;
-				   // 将对象重新赋值
-				   this.empData = emp 
-			  }
-		  },
+        formateDate(emp) {
+            for (var data in emp) {
+                // 数据拆分
+                let arr = emp[data].hireDate.split('T');
+                let d = arr[0];
+                emp[data].hireDate = d;
+                // 将对象重新赋值
+                this.empData = emp
+            }
+        },
 
         //获取客户信息
         getEmpData() {
