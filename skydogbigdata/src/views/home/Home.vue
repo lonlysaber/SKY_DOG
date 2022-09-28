@@ -1,7 +1,7 @@
 <template>
     <div>
-        <iframe width=1600 height=900 src="http://192.168.19.1/73YiqNK3Rjfw6KYB/" frameborder=0 allowfullscreen=true></iframe>
-        <iframe width=1600 height=900 src="http://192.168.19.1/l9NemqKmJoMiGQMb/" frameborder=0 allowfullscreen=true></iframe>
+        <iframe width=1600 height=900 src="https://59733751ac.goho.co/73YiqNK3Rjfw6KYB/" frameborder=0 allowfullscreen=true></iframe>
+        <iframe width=1600 height=900 src="https://59733751ac.goho.co/l9NemqKmJoMiGQMb/" frameborder=0 allowfullscreen=true></iframe>
     </div>
 </template>
 
