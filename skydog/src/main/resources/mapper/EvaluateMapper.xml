@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.skydog.dao.EvaluateDao">
+    <resultMap id="evaluateMap" type="Evaluate">
+        <id property="evaluateId" column="evaluateId"></id>
+        <result property="userId" column="userId"></result>
+        <result property="productId" column="productId"></result>
+        <result property="grade" column="grade"></result>
+        <result property="comment" column="comment"></result>
+        <result property="evaluateDate" column="evaluateDate"></result>
+    </resultMap>
+    <!-- 添加 -->
+    <insert id="add" parameterType="Evaluate">
+        insert into tb_evaluate
+        <trim prefix="  values ("
+              suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="productId != null">
+                #{productId},
+            </if>
+            <if test="grade != null">
+                #{grade},
+            </if>
+            <if test="comment != null">
+                #{comment},
+            </if>
+            <if test="evaluateDate != null">
+                #{evaluateDate},
+            </if>
+        </trim>
+    </insert>
+
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="int">
+        delete
+        from tb_evaluate
+        where evaluateId = #{evaluateId}
+          and userId = #{userId}
+    </delete>
+
+    <!-- Id查询 -->
+    <select id="queryId" parameterType="int" resultType="Evaluate">
+        select *
+        from tb_evaluate e
+        where e.evaluateId = #{evaluateId}
+    </select>
+
+
+        <sql id="selectActive">
+            <where>
+                <if test="evaluateId != null">
+                    e.evaluateId = #{evaluateId}
+                </if>
+                <if test="userId != null">
+                    and e.userId  = #{userId}
+                </if>
+                <if test="productId != null">
+                    and e.productId = #{productId}
+                </if>
+                <if test="grade != null">
+                    and e.grade  =#{grade}
+                </if>
+                <if test="comment != null">
+                    and e.comment = #{comment}
+                </if>
+                <if test="evaluateDate != null">
+                    and e.evaluateDate = #{evaluateDate}
+                </if>
+            </where>
+        </sql>
+
+    <!-- 动态模糊查询 -->
+    <select id="queryCondition" parameterType="Evaluate">
+        select * from tb_evaluate e
+        <!-- 查询条件 -->
+                <include refid="selectActive"/>
+    </select>
+
+    <!-- 查询用户所有评论 -->
+    <select id="getMyEvaluate" parameterType="int">
+        select u.*, e.*,
+        from tb_user u
+                 LEFT JOIN tb_evaluate e ON (u.userId = e.userId)
+        where e.userId = #{userId}
+    </select>
+
+    <!-- 查询商品所有评论 -->
+    <select id="getProductEvaluate" parameterType="int">
+        select p.*, e.*,
+        from tb_product p
+                 LEFT JOIN tb_evaluate e ON (p.productId = e.productId)
+        where e.productId = #{produtId}
+    </select>
+
+
+
+</mapper>

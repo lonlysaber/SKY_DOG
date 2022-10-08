@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.skydog.dao.RecommendDao">
+    <select id="hotRecommend" resultMap="com.example.skydog.dao.ProductDao.ProductDtoMap">
+        select p.*,g.*,i.*,s.* from tb_product p
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        LEFT JOIN tb_scale s ON (p.productId = s.productId)
+        <where>
+            <if test="1 == 1">
+                p.productStatus = "在售"
+            </if>
+            <if test="categoryId != null">
+                and p.categoryId = #{categoryId}
+            </if>
+            <if test="lowPrice != null">
+                <![CDATA[
+                and p.productPrice >= #{lowPrice}
+                ]]>
+            </if>
+            <if test="highPrice != null">
+                <![CDATA[
+                and p.productPrice <= #{highPrice}
+                ]]>
+            </if>
+            <if test="keyword != null">
+                and (g.categoryName like concat('%',#{keyword},'%')
+                OR p.productName like concat('%',#{keyword},'%')
+                OR p.productDec like concat('%',#{keyword},'%'))
+            </if>
+        </where>
+        order by p.productSale*0.3/5000+p.productGrade*0.2/5+p.clickRate*0.5/200000 desc
+        <!-- 分页-->
+        <if test="currentPage != null and pageSize != null">
+            <bind name="start" value="(currentPage - 1) * pageSize"/>
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+    <select id="countRecommend" resultType="int">
+        select count(1) from tb_product p
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        LEFT JOIN tb_scale s ON (p.productId = s.productId)
+        <where>
+            <if test="1 == 1">
+                p.productStatus = "在售"
+            </if>
+            <if test="categoryId != null">
+                and p.categoryId = #{categoryId}
+            </if>
+            <if test="lowPrice != null">
+                <![CDATA[
+                and p.productPrice >= #{lowPrice}
+                ]]>
+            </if>
+            <if test="highPrice != null">
+                <![CDATA[
+                and p.productPrice <= #{highPrice}
+                ]]>
+            </if>
+            <if test="keyword != null">
+                and (g.categoryName like concat('%',#{keyword},'%')
+                OR p.productName like concat('%',#{keyword},'%')
+                OR p.productDec like concat('%',#{keyword},'%'))
+            </if>
+        </where>
+
+    </select>
+</mapper>

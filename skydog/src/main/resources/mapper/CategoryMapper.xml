@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.skydog.dao.CategoryDao">
+
+    <resultMap id="categoryMap" type="com.example.skydog.module.entity.Category">
+        <id column="categoryId" property="categoryId"/>
+        <result column="categoryName" property="categoryName"/>
+        <result column="categoryDec" property="categoryDec"/>
+    </resultMap>
+    <!--
+       插入数据
+   -->
+    <insert id="add">
+        insert into tb_category
+        values(#{categoryId},#{categoryName},#{categoryDec})
+    </insert>
+    <!--
+      指量添加数据
+    -->
+    <insert id="batchAdd" >
+        <foreach collection="list" item="product" separator=";">
+            insert into tb_category
+            values(#{categoryId},#{categoryName},#{categoryDec})
+        </foreach>
+    </insert>
+    <!--  删除数据  -->
+    <delete id="delete">
+        DELETE from tb_category
+        where categoryId = #{categoryId}
+    </delete>
+    <!--  批量删除  -->
+    <delete id="batchDelete">
+        <foreach collection="list" item="categoryId" separator=";">
+            DELETE from tb_category
+            where categoryId = #{categoryId}
+        </foreach>
+    </delete>
+    <!--    添加，修改if判断-->
+    <sql id="categoryIf">
+        <if test="categoryId != null">
+            #{categoryId},
+        </if>
+        <if test="userId != null">
+            #{categoryName},
+        </if>
+        <if test="adminId != null">
+            #{categoryDec},
+        </if>
+    </sql>
+    <!--修改数据-->
+    <update id="update">
+        update tb_category
+        <set>
+            <include refid="categoryIf"></include>
+        </set>
+        where categoryId = #{categoryId}
+    </update>
+    <sql id="selectActive">
+        <where>
+            <if test="categoryId != null">
+                c.categoryId = #{categoryId}
+            </if>
+            <if test="categoryName != null">
+                and c.categoryName like concat('%',#{categoryName},'%')
+            </if>
+            <if test="categoryDec != null">
+                and c.categoryDec like
+                concat('%',#{categoryDec},'%')
+            </if>
+
+        </where>
+    </sql>
+    <!--    通过id查询-->
+    <select id="queryId">
+        select * from tb_category c
+        where c.categoryId = #{categoryId}
+    </select>
+    <!--    动态模糊查询-->
+    <select id="queryCondition" resultMap="categoryMap">
+        select * from tb_category c
+        <!-- 查询条件 -->
+        <include refid="selectActive"/>
+    </select>
+</mapper>

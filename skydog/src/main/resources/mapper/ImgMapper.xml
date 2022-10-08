@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.skydog.dao.ImgDao">
+    <!-- 结果集-->
+    <resultMap id="ImgMap" type="com.example.skydog.module.entity.Img">
+        <id column="imgId" property="imgId"/>
+        <result column="productId" property="productId"/>
+        <result column="productName" property="productName"/>
+        <result column="img1" property="img1"/>
+        <result column="img2" property="img2"/>
+        <result column="img3" property="img3"/>
+        <result column="img4" property="img4"/>
+        <result column="img5" property="img5"/>
+    </resultMap>
+</mapper>

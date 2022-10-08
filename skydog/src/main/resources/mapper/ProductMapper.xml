@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.skydog.dao.ProductDao">
+    <!-- 结果集-->
+    <resultMap id="BaseProductMap" type="com.example.skydog.module.entity.Product">
+        <id column="productId" property="productId"/>
+        <result column="userId" property="userId"/>
+        <result column="adminId" property="adminId"/>
+        <result column="categoryId" property="categoryId"/>
+        <result column="productName" property="productName"/>
+        <result column="productPrice" property="productPrice"/>
+        <result column="productDec" property="productDec"/>
+        <result column="productStock" property="productStock"/>
+        <result column="productStatus" property="productStatus"/>
+        <result column="productSale" property="productSale"/>
+        <result column="productGrade" property="productGrade"/>
+        <result column="clickRate" property="clickRate"/>
+        <result column="favorRate" property="favorRate"/>
+        <result column="productDetail" property="productDetail"/>
+        <association property="img" column="imgId"
+                     resultMap="com.example.skydog.dao.ImgDao.ImgMap"></association>
+        <collection property="scaleList" ofType="Scale"
+                    resultMap="com.example.skydog.dao.ScaleDao.ScaleMap"></collection>
+    </resultMap>
+    <resultMap id="ProductDtoMap"
+               extends="BaseProductMap"
+               type="com.example.skydog.module.dto.ProductDto">
+        <result column="categoryName" property="categoryName"/>
+        <result column="productScale" property="productScale"/>
+        <result column="productScaleStock" property="productScaleStock"/>
+        <result column="productScalePrice" property="productScalePrice"/>
+    </resultMap>
+
+    <!--
+           插入数据
+           id="实现的方法名"
+       -->
+    <insert id="add">
+        insert into tb_product
+        values(#{productId},#{userId},#{adminId},#{categoryId},#{productName},#{productPrice},#{productDec}
+              ,#{productStatus},#{productSale},#{productGrade},#{clickRate},#{imgId},#{productDetail},#{favorRate})
+        <selectKey keyProperty="productId" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID() AS productId
+        </selectKey>
+    </insert>
+    <!--
+      指量添加数据
+      collection="数组-array,集合-list"
+      item="每一个元素"
+    -->
+    <insert id="batchAdd" >
+        <foreach collection="list" item="product" separator=";">
+            insert into tb_product
+            values(#{productId},#{userId},#{adminId},#{categoryId},#{productName},
+                   #{productPrice},#{productDec},
+                   #{productStatus},#{productSale},#{productGrade})
+        </foreach>
+    </insert>
+    <!--  删除数据  -->
+    <delete id="delete">
+        DELETE from tb_product
+        where productId = #{productId}
+    </delete>
+    <!--  批量删除  -->
+    <delete id="batchDelete">
+        <foreach collection="list" item="productId" separator=";">
+            DELETE from tb_product
+            where productId = #{productId}
+        </foreach>
+    </delete>
+
+<!--    <update id="batchUpdate">-->
+<!--        <foreach collection="list" item="product" separator=";">-->
+<!--            DELETE from tb_product-->
+<!--            where productId = #{productId}-->
+<!--        </foreach>-->
+<!--    </update>-->
+    <!--    添加，修改if判断-->
+    <sql id="productIf">
+        <if test="userId != null">
+            userId = #{userId},
+        </if>
+        <if test="adminId != null">
+            adminId = #{adminId},
+        </if>
+        <if test="categoryId != null">
+            categoryId = #{categoryId},
+        </if>
+        <if test="productName != null">
+            productName = #{productName},
+        </if>
+        <if test="productPrice != null">
+            productPrice = #{productPrice},
+        </if>
+        <if test="productDec != null">
+            productDec = #{productDec},
+        </if>
+        <if test="productStatus != null">
+            productStatus = #{productStatus},
+        </if>
+        <if test="productSale != null">
+            productSale = #{productSale},
+        </if>
+        <if test="productGrade != null">
+            productGrade = #{productGrade},
+        </if>
+        <if test="imgId != null">
+            imgId = #{imgId},
+        </if>
+    </sql>
+    <!--修改数据-->
+    <update id="update">
+        update tb_product
+        <set>
+            <include refid="productIf"></include>
+        </set>
+        where productId = #{productId}
+    </update>
+    <sql id="condition">
+        <where>
+            <if test="productId != null">
+                p.productId = #{productId}
+            </if>
+            <if test="userId != null">
+                and p.userId = #{userId}
+            </if>
+            <if test="adminId != null">
+                and p.adminId = #{adminId}
+            </if>
+            <if test="categoryId != null">
+                and p.categoryId = #{categoryId}
+            </if>
+            <if test="productName != null">
+                and p.productName = #{productName}
+            </if>
+            <if test="productPrice != null">
+                and p.productPrice = #{productPrice}
+            </if>
+            <if test="productDec != null">
+                and p.productDec = #{productDec}
+            </if>
+            <if test="productStatus != null">
+                and p.productStatus = #{productStatus}
+            </if>
+            <if test="productSale != null">
+                and p.productSale = #{productSale}
+            </if>
+            <if test="productGrade != null">
+                and p.productGrade = #{productGrade}
+            </if>
+            <if test="imgId != null">
+                and p.imgId = #{imgId}
+            </if>
+        </where>
+    </sql>
+    <sql id="price">
+        <if test="lowPrice != null">
+            and p.productPrice >= #{lowPrice}
+        </if>
+        <if test="highPrice != null">
+            <![CDATA[
+                    and p.productPrice <= #{highPrice}
+                ]]>
+        </if>
+    </sql>
+    <!--    通过id查询-->
+    <select id="queryId" parameterType="int" resultMap="ProductDtoMap">
+        select p.*,g.*,i.*,s.* from tb_product p
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        LEFT JOIN tb_scale s ON (p.productId = s.productId)
+        where p.productId = #{productId}
+    </select>
+    <!--    动态模糊查询-->
+    <select id="queryCondition" resultMap="ProductDtoMap">
+        select p.*,g.*,i.*,s.* from tb_product p
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        LEFT JOIN tb_scale s ON (p.productId = s.productId)
+        <!-- 查询条件 -->
+        <include refid="condition"/>
+    </select>
+    <!--    通过种类查询-->
+    <select id="queryByCategory" resultMap="ProductDtoMap">
+        select p.*,g.*,i.*,s.* from tb_product p
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        LEFT JOIN tb_scale s ON (p.productId = s.productId)
+        where g.categoryName = #{keyword}
+        <include refid="sort"></include>
+        <if test="currentPage != null and pageSize != null">
+            <bind name="start" value="(currentPage - 1) * pageSize"/>
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+
+    <!--    通过种类查询-->
+    <select id="countByCategory" resultType="int">
+        select count(1) from tb_product p
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        LEFT JOIN tb_scale s ON (p.productId = s.productId)
+        where g.categoryName = #{keyword}
+
+    </select>
+    <sql id="selectActive">
+        <where>
+            <if test="productId != null">
+                p.productId = #{productId}
+            </if>
+            <if test="userId != null">
+                and p.userId = #{userId}
+            </if>
+            <if test="adminId != null">
+                and p.adminId = #{adminId}
+            </if>
+            <if test="categoryId != null">
+                and p.categoryId = #{categoryId}
+            </if>
+            <if test="productName != null">
+                and p.productName like concat('%',#{productName},'%')
+            </if>
+            <if test="productPrice != null">
+                and p.productPrice = #{productPrice}
+            </if>
+            <if test="productDec != null">
+                and p.productDec = like concat('%',#{productDec},'%')
+            </if>
+            <if test="productStatus != null">
+                and p.productStatus = like concat('%',#{productStatus},'%')
+            </if>
+            <if test="productSale != null">
+                and p.productSale = #{productSale}
+            </if>
+            <if test="productGrade != null">
+                and p.productGrade = #{productGrade}
+            </if>
+            <if test="imgId != null">
+                and p.imgId = #{imgId}
+            </if>
+            <if test="lowPrice != null">
+                and p.productPrice >= #{lowPrice}
+            </if>
+            <if test="highPrice != null">
+                <![CDATA[
+                and p.productPrice <= #{highPrice}
+                ]]>
+            </if>
+        </where>
+    </sql>
+<!--    条件查询分页-->
+    <select id="queryBySelectActive" resultMap="ProductDtoMap">
+        select p.*,g.*,i.* from tb_product p
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        <!-- 查询条件 -->
+        <include refid="selectActive"/>
+        <!-- 分页-->
+        <include refid="sort"></include>
+        <if test="currentPage != null and pageSize != null">
+            <bind name="start" value="(currentPage - 1) * pageSize"/>
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+    <select id="countBySelectActive" resultType="int">
+        select count(1) from tb_product p
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        <!-- 查询条件 -->
+        <include refid="selectActive"/>
+    </select>
+
+    <sql id="sort">
+        <if test="sort == 1">
+            ORDER BY p.productSale
+        </if>
+        <if test="sort == 2">
+            ORDER BY p.productSale desc
+        </if>
+        <if test="sort == 3">
+            ORDER BY p.productGrade
+        </if>
+        <if test="sort == 4">
+            ORDER BY p.productGrade desc
+        </if>
+        <if test="sort == 5">
+            ORDER BY p.productPrice
+        </if>
+        <if test="sort == 6">
+            ORDER BY p.productPrice desc
+        </if>
+    </sql>
+    <select id="search" resultMap="ProductDtoMap">
+        select p.*,g.*,i.* from tb_product p
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        <where>
+            <if test="1 == 1">
+                p.productStatus = "在售"
+            </if>
+            <if test="lowPrice != null">
+                and p.productPrice >= #{lowPrice}
+            </if>
+            <if test="highPrice != null">
+                <![CDATA[
+                    and p.productPrice <= #{highPrice}
+                    ]]>
+            </if>
+            <if test="keyword != null">
+                and (g.categoryName like concat('%',#{keyword},'%')
+                OR p.productName like concat('%',#{keyword},'%')
+                OR p.productDec like concat('%',#{keyword},'%'))
+            </if>
+        </where>
+        <include refid="sort"></include>
+        <!-- 分页-->
+        <if test="currentPage != null and pageSize != null">
+            <bind name="start" value="(currentPage - 1) * pageSize"/>
+            limit #{start},#{pageSize}
+        </if>
+
+    </select>
+    <select id="searchCount" resultType="int">
+        select count(1) from tb_product p
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        <where>
+            <if test="lowPrice != null">
+                p.productPrice >= #{lowPrice}
+            </if>
+            <if test="highPrice != null">
+                <![CDATA[
+                    and p.productPrice <= #{highPrice}
+                    ]]>
+            </if>
+            <if test="keyword != null">
+                and (g.categoryName like concat('%',#{keyword},'%')
+                OR p.productName like concat('%',#{keyword},'%')
+                OR p.productDec like concat('%',#{keyword},'%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="getMyProduct" resultMap="ProductDtoMap">
+        select p.*,g.*,i.*,s.* from tb_product p
+        LEFT JOIN tb_user u ON (p.userId = u.userId)
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        LEFT JOIN tb_scale s ON (p.productId = s.productId)
+        where u.userId = #{userId}
+        <include refid="sort"></include>
+    </select>
+<!--    &#45;&#45;         where g.categoryName like concat('%',#{keyword},'%')-->
+<!--    &#45;&#45;         OR p.productName like concat('%',#{keyword},'%')-->
+<!--    &#45;&#45;         OR p.productDec like concat('%',#{keyword},'%')-->
+</mapper>

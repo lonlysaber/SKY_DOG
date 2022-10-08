@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.skydog.dao.CartDao">
+    <resultMap id="cartMap" type="com.example.skydog.module.entity.Cart">
+        <id property="cartId" column="cartId"></id>
+        <result property="userId" column="userId"></result>
+        <result property="productId" column="productId"></result>
+        <result property="scaleId" column="scaleId"></result>
+        <result property="productCount" column="productCount"></result>
+        <result property="joinTime" column="joinTime"></result>
+
+        <association property="productDto" column="productId"
+                     resultMap="com.example.skydog.dao.ProductDao.ProductDtoMap"></association>
+    </resultMap>
+
+    <!--插入数据 -->
+    <insert id="add">
+        insert into tb_cart
+        values(#{cartId},#{userId},#{productId},#{scaleId},#{productCount},#{joinTime})
+        <selectKey keyProperty="cartId" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID() AS cartId
+        </selectKey>
+    </insert>
+    <!--指量添加数据 -->
+    <insert id="batchAdd">
+        <foreach collection="list" item="cart" separator=";">
+            insert into tb_cart
+            values(#{cartId},#{userId},#{productId},#{scaleId},#{productCount},#{joinTime})
+        </foreach>
+    </insert>
+    <!--  删除数据  -->
+    <delete id="delete">
+        DELETE from tb_cart
+        where cartId = #{cartId}
+    </delete>
+    <!--  批量删除  -->
+    <delete id="batchDelete">
+        <foreach collection="list" item="cartId" separator=";">
+            DELETE from tb_cart
+            where cartId = #{cartId}
+        </foreach>
+    </delete>
+    <!--    添加，修改if判断-->
+    <sql id="cartIf">
+        <if test="cartId != null">
+            #{cartId},
+        </if>
+        <if test="userId != null">
+            #{userId},
+        </if>
+        <if test="productId != null">
+            #{productId},
+        </if>
+        <if test="scaleId != null">
+            #{scaleId},
+        </if>
+        <if test="productCount != null">
+            #{productCount},
+        </if>
+        <if test="joinTime != null">
+            #{joinTime},
+        </if>
+
+    </sql>
+    <!--修改数据-->
+    <update id="update">
+        update tb_cart
+        <set>
+            <include refid="cartIf"></include>
+        </set>
+        where cartId = #{cartId}
+    </update>
+    <sql id="selectActive">
+        <where>
+            <if test="cartId != null">
+                c.cartId = #{cartId}
+            </if>
+            <if test="userId != null">
+                and c.userId = #{userId}
+            </if>
+            <if test="productId != null">
+                and c.productId = #{productId}
+            </if>
+            <if test="scaleId != null">
+                and c.scaleId = #{scaleId}
+            </if>
+            <if test="productCount != null">
+                and c.productCount = #{productCount}
+            </if>
+            <if test="joinTime != null">
+                and c.joinTime = #{joinTime}
+            </if>
+        </where>
+    </sql>
+    <!--    通过id查询-->
+    <select id="queryId" resultMap="cartMap">
+        select c.*,p.*,g.*,i.*,s.* from tb_cart c
+        LEFT JOIN tb_product p ON (c.productId = p.productId)
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        LEFT JOIN tb_scale s ON (c.scaleId = s.scaleId)
+        where c.cartId = #{cartId}
+    </select>
+    <!--    动态模糊查询-->
+    <select id="queryCondition" resultMap="cartMap">
+        select c.*,p.*,g.*,i.*,s.* from tb_cart c
+        LEFT JOIN tb_product p ON (c.productId = p.productId)
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        LEFT JOIN tb_scale s ON (c.scaleId = s.scaleId)
+        <!-- 查询条件 -->
+        <include refid="selectActive"/>
+    </select>
+    <!--    查询自己购物车-->
+    <select id="getMyCart" resultMap="cartMap">
+        select c.*,p.*,g.*,i.*,s.* from tb_user u
+        LEFT JOIN tb_cart c ON (u.userId = c.userId)
+        LEFT JOIN tb_product p ON (c.productId = p.productId)
+        LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+        LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        LEFT JOIN tb_scale s ON (c.scaleId = s.scaleId)
+        where u.userId = #{userId}
+        ORDER BY c.joinTime DESC
+    </select>
+</mapper>

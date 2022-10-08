@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.skydog.dao.AdminDao">
+<!--添加管理员账号-->
+    <insert id="add">
+        insert into tb_admin(
+          adminId,
+          adminName,
+          adminAcc,
+          adminPwd
+          ) values(
+            #{adminId},
+            #{adminName},
+            #{adminAcc},
+            #{adminPwd}
+          )
+    </insert>
+
+<!-- 删除管理员账号   -->
+    <delete id="delete" parameterType="java.lang.Integer">
+    delete from tb_admin where adminId=#{id}
+    </delete>
+<!--更改账号信息-->
+    <update id="update" parameterType="com.example.skydog.module.entity.Admin">
+    update tb_admin
+    <set>
+        <if test="adminName != null">
+        adminName=#{adminName}
+        </if>
+
+        <if test="adminAcc != null">
+        adminAcc=#{adminAcc}
+        </if>
+
+        <if test="adminPwd !=null">
+        adminPwd=#{adminAcc}
+        </if>
+        where adminId=#{adminId}
+    </set>
+
+    </update>
+
+<!--按主键查询 -->
+    <resultMap id="Query" type="com.example.skydog.module.entity.Admin">
+        <id column="adminId" property="adminId" />
+        <result column="adminName" property="adminName"/>
+        <result column="adminAcc" property="adminAcc"  />
+        <result column="adminPwd" property="adminPwd" />
+    </resultMap>
+
+
+    <select id="queryId" parameterType="java.lang.Integer" resultMap="Query">
+    select *from tb_admin where adminId=#{id}
+    </select>
+
+<!--按条件查询-->
+<!--  查询条件  -->
+    <sql id="selectActive">
+    <where>
+    <if test="adminId != null">
+        adminId=#{adminId}
+    </if>
+    <if test="adminName !=null">
+        adminName=#{adminName}
+    </if>
+    <if test="adminAcc !=null">
+        adminAcc=#{adminAcc}
+    </if>
+    <if test="adminPwd !=null">
+        adminPwd=#{adminPwd}
+    </if>
+
+    </where>
+    </sql>
+
+
+    <select id="queryCondition" parameterType="Admin" resultMap="Query">
+    select *from tb_admin
+        <include refid="selectActive"/>
+    </select>
+
+
+
+</mapper>

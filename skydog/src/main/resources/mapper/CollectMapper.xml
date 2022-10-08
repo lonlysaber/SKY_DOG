@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.skydog.dao.CollectDao">
+
+    <resultMap id="collectMap" type="Collect">
+        <id property="collectId" column="collectId"></id>
+        <result property="userId" column="userId"></result>
+        <result property="productId" column="productId"></result>
+        <result property="collectTime" column="collectTime"></result>
+        <result property="sellerId" column="sellerId"></result>
+        <association property="product" column="productId" javaType="Product"
+                     resultMap="com.example.skydog.dao.ProductDao.BaseProductMap"></association>
+
+        <association property="user" column="userId" javaType="User"
+                     resultMap="com.example.skydog.dao.UserDao.userMap"></association>
+        <collection property="productList" ofType="Product"
+                    resultMap="com.example.skydog.dao.ProductDao.ProductDtoMap"></collection>
+    </resultMap>
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="Collect">
+        insert into tb_collect
+        values (#{collectId}, #{userId}, #{productId}, #{collectTime},#{sellerId})
+        <selectKey keyProperty="collectId" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID() AS collectId
+        </selectKey>
+    </insert>
+
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="int">
+        delete
+        from tb_collect
+        where userId = #{userId}
+        <if test="productId != null">
+            and productId = #{productId}
+        </if>
+        <if test="productId != null">
+            and sellerId = #{sellerId}
+        </if>
+    </delete>
+
+    <!-- 通过id查询 -->
+    <select id="queryId" parameterType="int" resultMap="collectMap">
+        select * from tb_collect c
+                 LEFT JOIN tb_product p ON (c.productId = p.productId)
+                 LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        where c.collectId = #{collectId}
+    </select>
+
+
+    <!-- 获取用户收藏 -->
+    <select id="getMyCollect" parameterType="int" resultMap="collectMap">
+        select c.*, p.*, i.*
+        from tb_user u
+                 LEFT JOIN tb_collect c ON (u.userId = c.userId)
+                 LEFT JOIN tb_product p ON (c.productId = p.productId)
+                 LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        where c.userId = #{userId}
+        and c.productId = p.productId
+        ORDER BY c.collectTime DESC
+    </select>
+
+    <!-- 获取店铺收藏 -->
+    <select id="getMyStore" parameterType="int" resultMap="collectMap">
+        select c.*, s.*,p.*,i.*
+        from tb_collect c
+                 LEFT JOIN tb_user u ON (u.userId = c.userId)
+                 LEFT JOIN tb_user s ON (s.userId = c.sellerId)
+                 LEFT JOIN tb_product p ON (c.sellerId = p.userId)
+                 LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        where c.userId = #{userId}
+        and s.userId = c.sellerId
+        ORDER BY c.collectTime DESC
+    </select>
+
+
+    <!--  获取失效收藏商品-->
+    <select id="getUseless" parameterType="int" resultMap="collectMap">
+        select c.*, p.*, i.*
+        from tb_user u
+                 LEFT JOIN tb_collect c ON (u.userId = c.userId)
+                 LEFT JOIN tb_product p ON (c.productId = p.productId)
+                 LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        where c.userId = #{userId}
+          and p.productStatus = '下架'
+        ORDER BY c.collectTime DESC
+    </select>
+
+    <!--  收藏商品搜索-->
+    <select id="getSearch" resultMap="collectMap">
+        select c.*, p.*, i.*
+        from tb_user u
+                 LEFT JOIN tb_collect c ON (u.userId = c.userId)
+                 LEFT JOIN tb_product p ON (c.productId = p.productId)
+                 LEFT JOIN tb_category g ON (p.categoryId = g.categoryId)
+                 LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        where c.userId = #{userId}
+            and g.categoryName like concat('%', #{keyword}, '%')
+           or p.productName like concat('%', #{keyword}, '%')
+           or p.productDec like concat('%', #{keyword}, '%')
+        ORDER BY c.collectTime DESC
+    </select>
+
+
+    <!-- 条件查询收藏 -->
+    <select id="queryCondition" parameterType="Collect" resultType="Collect">
+        select * from tb_collect c
+        <where>
+            <if test="userId!=null">
+                and c.userId = #{userId}
+            </if>
+            <if test="productId!=null">
+                and c.productId = #{productId}
+            </if>
+            <if test="collectTime!=null">
+                and c.collectTime = #{collectTime}
+            </if>
+            <if test="sellerId!=null">
+                and c.sellerId = #{sellerId}
+            </if>
+        </where>
+        ORDER BY c.collectTime DESC
+    </select>
+
+    <!-- 批量删除 -->
+    <delete id="batchDelete">
+        <foreach collection="list" item="productId" separator=";">
+            DELETE from tb_collect c
+            where c.userId = #{userId}
+            and c.productId = #{productId}
+        </foreach>
+    </delete>
+
+</mapper>

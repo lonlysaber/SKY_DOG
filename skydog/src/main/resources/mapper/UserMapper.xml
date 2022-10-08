@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.skydog.dao.UserDao">
+    <resultMap id="userMap" type="com.example.skydog.module.entity.User">
+        <id property="userId" column="userId"></id>
+        <result property="userName" column="userName"></result>
+        <result property="password" column="password"></result>
+        <result property="nick" column="nick"></result>
+        <result property="phone" column="phone"></result>
+        <result property="avatar" column="avatar"></result>
+        <result property="gender" column="gender"></result>
+        <result property="IDCard" column="IDCard"></result>
+        <collection property="productList" ofType="Product"
+                    resultMap="com.example.skydog.dao.ProductDao.ProductDtoMap"></collection>
+
+    </resultMap>
+
+    <resultMap id="userDtoMap" extends="userMap" type="com.example.skydog.module.dto.UserDto">
+        <result column="search" property="search"/>
+        <result column="browse" property="browse"/>
+        <result column="consume" property="consume"/>
+    </resultMap>
+
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="User">
+        insert into tb_user
+        values (#{userId}, #{userName}, #{password}, #{nick}, #{phone}, #{avatar}, #{gender}, #{IDCard})
+    </insert>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="int">
+        delete
+        from tb_user
+        where userId = #{userId}
+    </delete>
+
+    <!-- 动态修改 -->
+    <update id="update" parameterType="User">
+        update tb_user u
+        <set>
+            <if test="userName !=null">
+                u.userName = #{userName},
+            </if>
+            <if test="password !=null">
+                u.password = #{password},
+            </if>
+            <if test="nick !=null">
+                u.nick = #{nick},
+            </if>
+            <if test="phone !=null">
+                u.phone = #{phone},
+            </if>
+            <if test="avatar !=null">
+                u.avatar = #{avatar},
+            </if>
+            <if test="gender !=null">
+                u.gender = #{gender},
+            </if>
+            <if test="IDCard !=null">
+                u.IDCard = #{IDCard},
+            </if>
+        </set>
+        where u.userId = #{userId}
+    </update>
+
+    <!-- Id查询 -->
+    <select id="queryId" parameterType="int" resultMap="userDtoMap">
+        select *
+        from tb_user u
+        where u.userId = #{userId}
+    </select>
+
+
+    <sql id="selectActive">
+        <where>
+            <if test="userId != null">
+                u.userId = #{userId}
+            </if>
+            <if test="userName != null">
+                and u.userName like
+                concat('%',#{userName},'%')
+            </if>
+            <if test="nick != null">
+                and u.nick like
+                concat('%',#{nick},'%')
+            </if>
+            <if test="password != null">
+                and u.password like
+                concat('%',#{password},'%')
+            </if>
+            <if test="phone != null">
+                and u.phone like
+                concat('%',#{phone},'%')
+            </if>
+            <if test="gender != null">
+                and u.gender = #{gender}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 动态模糊查询 -->
+    <select id="queryCondition" parameterType="User" resultMap="userMap">
+        select * from tb_user u
+        <!-- 查询条件 -->
+        <include refid="selectActive"/>
+    </select>
+
+    <!-- 分页 -->
+    <select id="queryBySelectActive" resultMap="userMap">
+        select * from tb_user
+        <include refid="selectActive"></include>
+        <!-- 分页-->
+        <if test="currentPage != null and pageSize != null">
+            <bind name="start" value="(currentPage - 1) * pageSize"/>
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+
+    <select id="countBySelectActive" resultType="int">
+        select count(1) from tb_user
+        <include refid="selectActive"></include>
+    </select>
+
+    <!-- 用户推荐 -->
+
+    <select id="getCollectCategory" resultType="int">
+        select g.categoryId
+        from tb_user u
+                 LEFT JOIN tb_collect c ON (u.userId = c.userId)
+                 LEFT JOIN tb_product p ON (c.productId = p.productId)
+                 LEFT OUTER JOIN tb_category g ON (p.categoryId = g.categoryId)
+        where c.userId = #{userId}
+          and c.productId = p.productId
+    </select>
+
+
+    <select id="getCartCategory" resultType="int">
+        select g.categoryId
+        from tb_user u
+                 LEFT JOIN tb_cart c ON (u.userId = c.userId)
+                 LEFT JOIN tb_product p ON (c.productId = p.productId)
+                 LEFT OUTER JOIN tb_category g ON (p.categoryId = g.categoryId)
+        where c.userId = #{userId}
+          and c.productId = p.productId
+    </select>
+
+
+    <select id="getUserRecommend" parameterType="int" resultMap="userDtoMap">
+        select u.*
+        from tb_user u
+--                  LEFT JOIN tb_collect c ON (u.userId = c.userId)
+--                  LEFT JOIN tb_product p ON (c.productId = p.productId)
+--                   LEFT JOIN tb_img i ON (p.imgId = i.imgId)
+        where u.userId = #{userId}
+    </select>
+
+</mapper>

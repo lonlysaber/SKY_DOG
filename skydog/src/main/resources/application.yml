@@ -1,0 +1,87 @@
+alipay:
+  appId: 2021000121668200
+  privateKey: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCbtbYC9druku9KuvzxyjhxTD9pISE9umwMM12gAhg9GNzKvSL749TquPlk/AhE4xn4YeTc1dhtlqSR1VT9h1lyQVIhOUUKwKfeILQ8NjCL5DcQG96u4Mc9wDTlBnqvb5ThSlR4ibLSAyBeQqtsAcf0lC1eqis6ATw8gm8MaYcK2Jj1C/DQAwvL2mq9ABVyjOBkStKAtrsQ4GkGI8m5Rxb2wTTlnsP8krTIkqkbmnHxtojE1Tv/xyFAmQVeOujffggzajRP0MnYs+duLRcPXk0EZHqs/gnh6ivUIZuVLuX7i122SPK5QN951K8AZBhsTl7gaxLraA4XgR7XxULdVkQZAgMBAAECggEBAJJCxY1SUyv2aT/RFPgp84q5DHc733WUPxnWxgMe9JWvXPYzY0EoaT9yMRFijIHosORXUBr/5CRMdJlnwkXDdYmVQghjOy82eHh2T9afMEq3O+GtzCaIjZ67hPP8ehGAxmA46c+vyIDs3uKrzUnPAnwDE/rv7Vq2/lX4T0dheK/9/UTX3u9y92wpjoYNBfjOnG1Er9V8Xjsf6/rn2f7PowM7x/Cw9B1MSEA0LskA7fpcBSWfx7K0H2QilrbVl8mhTV8E4TVnWRjrjjjFs/zJXADVc6kYsc+QBpHSKSyIdcBOJOEQokNC2svGBr0pReW3q/MDnsgoeRquVjt86G9pcGECgYEA0xxdlz+k6QcoWDBMsglFuzmWyiw8qC/xGbZOEWZ4r9836Vt4UT2OKpn2ZFniqA+KCCF4JVL54USGshulsFf8Q6vElbYMgtJ+2BAmvporrui8OCx8AUPG1ukZq+EVbWiREnKehI6nj2oc7XYsjJusU7jv4PvDTkVtOCt8FHDZA18CgYEAvNGj2sfzg/LmuZ/7TDtyxYEQMqvsAJ3Ok9U5msDibDQNY/kpuMiH5LhKKp6WdTwwkDNtqteJJBJJX10lemdl/iY6VADlc8Th03/gKryaR01BG/My+dhzJnfAy8/4ubXcKiHgHJOBiLCZo0CgmEt4SOwh3K/Wg3VtfSvj5WpAo4cCgYBeY5Jc67HaFr8tHvtLpuWsnkUTQ9AjCrxr2JzzHrPbPpyLE8Cp4jHMTmZh2+aBaeE3XW+QkJb052SqAb6FJ/G8d/I/VdQmMeNQy3fnRJs/awOswgb3scwXjsVRmiOwdU5XxzOk5Pt6HeGtMmccvwW/sTJfj3F1b4kz0g16PjJpVQKBgC3jKNYHl+euRWJBPfo1zFuxVPVrkKxJraWBwUEZtS0krUhpijktCtGL9AJNjjUpjofM588IGH0asJgrc+s+a6wLMEuv+BNdeqBCyIC6WygO307imLXdY4aqvcEKZuEDEGFw4B0xv94vRPdGwoCgfrgCIuyWEyTZieVMoFLlspXLAoGBAKYZFi8vhB2MkWmo5h3sPAU2WOmGxpu0YtvRZiqFlSqzr3skhItkL2wUBo4oIcEiDAyYiHfXj/xhdXlHH54w73af47DfrIdfibF0PcW0wcPC6iuPKeo+t8i0jtVzVZIfPsKGtXQsJqjOXll1qg+SUYw3QeSgWtaB5tsf/vUZd71/
+  publicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoX3Sa5lYqG2eL1lNH/ECBBZfbYxanwz9H4Kbx7sLPHJKR1d9tHrkADn1MsUusWE87SFSpxcHhvyG4SoZO7KUt5EV77lfqE67OPGzuUChcBrLv9jvOlPit0HmEGYtVy99CKE9Ds5ZflSU5S7HlWpRf+5oI1l7i5gwdcvHjiaI13jBlIaa6AqcmVKPjLuvXjibmlOSDYqrqBkT3wJwhfZxvnVXJPJGELlrYb/emOe/pIxXTCVONHopkj7Wlsl7Im6YA1vLo0JbOfNwSuwXlHHBVV+twbWKxx/0Lb1z30Wl0WULg5btptbCelSN4xqLv/Ts736SLC4idVlsJVhiidMMIwIDAQAB
+  notifyUrl: https://5164qd7666.oicp.vip/notifyUrl
+  returnUrl: http://localhost:8080/me/order?activeName=finished
+  signType: RSA2
+  charset: utf-8
+  gatewayUrl: https://openapi.alipaydev.com/gateway.do
+  logPath: "C:/Users/new/Desktop/log.TXT"
+
+
+#连接数据库
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db_skydog?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    username: root
+    password: root
+    type: com.zaxxer.hikari.HikariDataSource # 数据池
+    hikari:
+      # 池中维护的最小连接数
+      minimum-idle: 10
+      # 池中最大连接数，包括闲置和使用的连接数
+      maxmum-pool-size: 20
+      # 池中连接最长生命周期，默认为30分钟
+      max-lifetime: 1800000
+      # 允许最长空闲时间
+      idle-timeout: 30000
+      # 数据库连接超时时间，默认为30秒
+      connection-timeout: 30000
+  #kafka
+  kafka:
+    #集群地址
+    bootstrap-servers: master:9092,slave01:9092,slave02:9092
+    #生产者配置
+    producer:
+      #系列化方式
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      #采用的ack机制
+      acks: 1
+      #批量提交的数据大小 16kb
+      batch-size: 16384
+      #生产者暂存数据的缓冲区大小
+      buffer-memory: 33554432
+    #消费者配置
+    consumer:
+      #是否自动提交偏移量
+      enable-auto-commit: true
+      #消费消息后间隔多长时间提交偏移量
+      auto-commit-interval: 100
+      #默认的消费者组，代码中可以热键修改
+      group-id: test824
+      # earliest:当各分区下有已提交的offset时，从提交的offset开始消费；无提交的offset时，从头开始消费
+      # latest:当各分区下有已提交的offset时，从提交的offset开始消费；无提交的offset时，消费新产生的该分区下的数据
+      # none:topic各分区都存在已提交的offset时，从offset后开始消费；只要有一个分区不存在已提交的offset，则抛出异常
+      auto-offset-reset: latest
+      #系列化方式
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  mvc:
+    format:
+      date: yyyy-MM-dd
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    throw-exception-if-no-handler-found: true
+  jackson:
+    date-format: yyyy-MM-dd
+    time-zone: GMT+8
+
+#整合mybatis
+mybatis:
+  #加载实体类
+  type-aliases-package: com.example.skydog.module.entity
+  #映射文件
+  mapper-locations: mapper/*Mapper.xml
+  #输出日志
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+server:
+  port: 8088
+
+
+
+

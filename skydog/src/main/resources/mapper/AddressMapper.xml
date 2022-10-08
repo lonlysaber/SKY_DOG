@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.skydog.dao.AddressDao">
+    <resultMap id="addressMap" type="Address">
+
+        <id property="addressId" column="addressId"></id>
+        <result property="userId" column="userId"></result>
+        <result property="consigneeName" column="consigneeName"></result>
+        <result property="consigneePhone" column="consigneePhone"></result>
+        <result property="zone" column="zone"></result>
+        <result property="fullAddress" column="fullAddress"></result>
+        <result property="isDefault" column="isDefault"></result>
+    </resultMap>
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="Address">
+        insert into tb_address
+        values (#{addressId}, #{userId}, #{consigneeName}, #{consigneePhone}, #{zone}, #{fullAddress}, #{isDefault})
+    </insert>
+
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="int">
+        delete
+        from tb_address a
+        where a.addressId = #{addressId}
+    </delete>
+
+    <!-- 动态更新 -->
+    <update id="update" parameterType="Address">
+        update tb_address a
+        <set>
+            <if test="userId!=null">
+                a.userId=#{userId},
+            </if>
+            <if test="consigneeName!=null">
+                a.consigneeName=#{consigneeName},
+            </if>
+            <if test="consigneePhone!=null">
+                a.consigneePhone=#{consigneePhone},
+            </if>
+            <if test="zone!=null">
+                a.zone=#{zone},
+            </if>
+            <if test="fullAddress!=null">
+                a.fullAddress=#{fullAddress},
+            </if>
+            <if test="isDefault!=null">
+                a.isDefault=#{isDefault},
+            </if>
+        </set>
+        where a.addressId=#{addressId}
+    </update>
+
+    <!-- Id查询 -->
+    <select id="queryId" parameterType="int" resultType="Address">
+        select *
+        from tb_address a
+        where a.addressId = #{addressId}
+    </select>
+
+    <!-- 查询用户所有地址 -->
+    <select id="getMyAddress" parameterType="int" resultType="Address">
+        select u.*, a.*
+        from tb_user u
+                 LEFT JOIN tb_address a ON (u.userId = a.userId)
+        where a.userId = #{userId}
+    </select>
+
+
+    <!-- 批量删除 -->
+    <!--    <delete id="batchDelete" parameterType="List">-->
+
+
+</mapper>
